@@ -110,10 +110,9 @@ export default function BuyCableTv() {
       );
 
       if (handleVerifyTvSub.fulfilled.match(resultAction)) {
-        const { Customer_Name, Due_Date } = resultAction.payload.data.content;
+        const { customerName } = resultAction.payload.data.validate;
         setCustomerDetails({
-          name: Customer_Name || "N/A",
-          dueDate: Due_Date || "N/A",
+          name: customerName || "N/A",
         });
         setIsVerified(true);
         toast.success("✅ Smart Card number verified successfully!");
@@ -140,11 +139,11 @@ export default function BuyCableTv() {
     }
 
     const payload = {
-      customerName: customerDetails.name || "sodiq",
+      customerName: customerDetails.name,
       provider: selectedProvider,
       userId: user?._id,
       planId: selectedPlan._id,
-      smartCardNo: values.smartcard_number,
+      smartCardNo: values.smartCardNo,
       phone: values.phone,
       amount: Number(values.amount),
       pinCode,
