@@ -136,18 +136,18 @@ export const HomeDashboard = () => {
       {/* Quick Actions */}
       <div className="grid grid-cols-4 gap-3 mb-6">
         {[
-          //         {
-          //   id: 1,
-          //   icon: <Send size={24} className="text-blue-500" />,
-          //   label: "Send",
-          //   link: "/dashboard/send",
-          // },
-          // {
-          //   id: 2,
-          //   icon: <Download size={24} className="text-green-500" />,
-          //   label: "Receive",
-          //   link: "/dashboard/receive",
-          // },
+          {
+            id: 1,
+            icon: <Send size={24} className="text-blue-500" />,
+            label: "Send",
+            link: "/dashboard/sendMoney",
+          },
+          {
+            id: 2,
+            icon: <Download size={24} className="text-green-500" />,
+            label: "Receive",
+            link: "/dashboard/sendMoney",
+          },
           {
             id: 3,
             icon: <Phone size={24} className="text-blue-500" />,
@@ -169,13 +169,13 @@ export const HomeDashboard = () => {
 
           {
             id: 6,
-            icon: <GraduationCap size={24} />,
+            icon: <GraduationCap size={24} color="blue" />,
             label: "Exam",
             link: "/dashboard/buyExam",
           },
           {
             id: 7,
-            icon: <Tv2 size={24} />,
+            icon: <Tv2 size={24} color="red" />,
             label: "TV",
             link: "/dashboard/buyCableTv",
           },

@@ -172,6 +172,10 @@ export default function EasyAccessBuyData() {
       <ApHeader title="Buy Data" />
       <div className="flex flex-col items-center p-4">
         <div className="w-full max-w-md">
+          <p className="text-sm text-gray-600 text-center py-2 mb-4">
+            Select your network and plan, enter your number, and complete with
+            your PIN.
+          </p>
           <Formik
             initialValues={{ phone: "", planId: "", amount: "", network: "" }}
             validationSchema={validationSchema}

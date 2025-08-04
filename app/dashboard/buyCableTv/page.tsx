@@ -194,10 +194,10 @@ export default function BuyCableTv() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-white">
       <ApHeader title="Buy Cable TV Subscription" />
       <div className="flex justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+        <div className="bg-white p-6  w-96">
           <p className="text-sm text-gray-600 text-center py-2 mb-4">
             Select a provider and enter details to subscribe.
           </p>

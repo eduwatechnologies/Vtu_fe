@@ -120,10 +120,10 @@ export default function BuyAirtime() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-white">
       <ApHeader title="Buy Airtime" />
       <div className="flex bg-gray-100 ">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <div className="bg-white p-6  w-full max-w-md">
           <p className="text-sm text-gray-600 text-center py-2 mb-4">
             Select your network, enter your number and amount, and complete with
             your PIN.

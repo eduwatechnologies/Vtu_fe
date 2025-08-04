@@ -175,10 +175,10 @@ export default function BuyElectricity() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-white">
       <ApHeader title="Buy Electricity" />
       <div className="flex justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+        <div className="bg-white p-6  w-96">
           <Formik
             initialValues={{
               meterno: "",
