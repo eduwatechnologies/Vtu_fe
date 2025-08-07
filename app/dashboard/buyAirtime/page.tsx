@@ -103,12 +103,19 @@ export default function BuyAirtime() {
     setLoading(true);
     try {
       const resultAction = await dispatch(purchaseAirtime(payload));
+
       if (purchaseAirtime.fulfilled.match(resultAction)) {
-        // const { request_id } = resultAction.payload;
+        const { transactionId } = resultAction.payload;
         toast.success("✅ Airtime purchase successful!");
-        // router.push(`/dashboard/transaction?request_id=${request_id}`);
+        router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
-        toast.error(`❌ ${resultAction.payload || "Airtime purchase failed!"}`);
+        const errorMessage =
+          resultAction.payload?.message || "❌ Airtime purchase failed!";
+        toast.error(errorMessage);
+        const transactionId = resultAction.payload?.transactionId;
+        if (transactionId) {
+          router.push(`/dashboard/transaction?request_id=${transactionId}`);
+        }
       }
     } catch (error) {
       toast.error("An unexpected error occurred");

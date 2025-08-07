@@ -6,7 +6,7 @@ export const fetchTransactions = createAsyncThunk(
   "transactions/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/transactions/transactions");
+      const response = await axiosInstance.get("/transactions");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Failed to fetch");
@@ -17,11 +17,9 @@ export const fetchTransactions = createAsyncThunk(
 // ✅ Fetch a single transaction by request ID
 export const fetchTransactionById = createAsyncThunk(
   "transactions/fetchById",
-  async ({ request_id }: { request_id: string }, { rejectWithValue }) => {
+  async ({ _id }: { _id: string }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(
-        `/transactions/transactions/${request_id}`
-      );
+      const response = await axiosInstance.get(`/transactions/${_id}`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Transaction not found");
@@ -34,7 +32,9 @@ export const fetchUserTransactions = createAsyncThunk(
   "transactions/fetchByUser",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/transactions/user");
+      const response = await axiosInstance.get(
+        "/transactions/user_transaction"
+      );
       return response.data.transactions;
     } catch (error: any) {
       return rejectWithValue(
@@ -46,7 +46,7 @@ export const fetchUserTransactions = createAsyncThunk(
 
 interface Transaction {
   _id: string;
-  product_name: string;
+  network: string;
   unique_element: string;
   unit_price: string;
   quantity: number;

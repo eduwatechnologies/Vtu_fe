@@ -54,7 +54,7 @@ export default function HistoryPage() {
               const status = trans?.status || "Pending";
               return (
                 <Link
-                  href={`/dashboard/transaction?request_id=${trans?.request_id}`}
+                  href={`/dashboard/transaction?request_id=${trans?._id}`}
                   key={trans?._id}
                   className="bg-white shadow-md rounded-lg p-4 border border-gray-200"
                 >
@@ -72,7 +72,7 @@ export default function HistoryPage() {
                   </div>
                   <p className="text-gray-500 text-sm mt-2">
                     <strong className=" font-bold">Product:</strong>
-                    {trans?.product_name ||
+                    {trans?.network ||
                       trans?.response_data?.data?.type ||
                       "N/A"}
                   </p>

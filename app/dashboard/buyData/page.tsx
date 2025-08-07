@@ -139,24 +139,51 @@ export default function EasyAccessBuyData() {
       return;
     }
 
-    // Provider comes from selectedService
     const payload = {
       networkId: selectedNetwork,
       userId: user?._id,
       dataType: selectedPlan.category,
-      planId: selectedPlan._id, // send ObjectId only
+      planId: selectedPlan._id,
       phone: values.phone,
+      amount: values.amount,
       pinCode,
     };
 
     try {
       setLoading(true);
       const resultAction = await dispatch(purchaseData(payload as any));
+
+      // if (purchaseData.fulfilled.match(resultAction)) {
+      //   toast.success("Data purchase successful!");
+      //   const { transactionId } = resultAction.payload;
+      //   router.push(`/dashboard/transaction?request_id=${transactionId}`);
+      // } else {
+      //   toast.error(resultAction.payload?.message || "Purchase failed!");
+      //   const transactionId = resultAction.payload?.transactionId;
+      //   if (transactionId) {
+      //     router.push(`/dashboard/transaction?request_id=${transactionId}`);
+      //   }
+      // }
+
       if (purchaseData.fulfilled.match(resultAction)) {
+        // Success
         toast.success("Data purchase successful!");
-        router.push(`/dashboard/transaction?request_id=data`);
+        const { transactionId } = resultAction.payload;
+        router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
-        toast.error(resultAction.payload || "Purchase failed!");
+        const errorPayload = resultAction.payload; // May be undefined
+        const fallbackMessage =
+          resultAction.error?.message || "Purchase failed!";
+
+        toast.error(errorPayload?.message || fallbackMessage);
+
+        const transactionId = errorPayload?.transactionId;
+
+        if (transactionId) {
+          router.push(`/dashboard/transaction?request_id=${transactionId}`);
+        } else {
+          console.warn("⚠️ No transactionId returned for failed transaction.");
+        }
       }
     } catch {
       toast.error("An unexpected error occurred");

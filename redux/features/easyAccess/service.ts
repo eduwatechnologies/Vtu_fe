@@ -20,6 +20,21 @@ export interface Electricity {
   phone: string;
 }
 
+// typescript types
+type PurchaseAirtimePayload = {
+  planId: string;
+  phone: string;
+  userId: string;
+  pinCode: string;
+  amount: string;
+  airtimeType: string;
+};
+
+type PurchaseAirtimeResponse = {
+  message: string;
+  transactionId: string;
+};
+
 // --- Async Thunks ---
 
 // Fetch available plans from our DB (not directly from EasyAccess)
@@ -76,42 +91,60 @@ export const fetchDataCategories = createAsyncThunk<
 
 // Purchase data bundle
 export const purchaseData = createAsyncThunk<
-  { message: string },
-  { planId: string; phone: string; userId: string; pinCode: string },
-  { rejectValue: string }
+  { message: string; transactionId: string }, // 👈 include transactionId
+  {
+    planId: string;
+    phone: string;
+    userId: string;
+    pinCode: string;
+    networkId?: string;
+    dataType?: string;
+    amount?: string;
+  },
+  { rejectValue: { message: string; transactionId?: string } }
 >("dataPlans/purchaseData", async (payload, { rejectWithValue }) => {
   try {
     const response = await axiosInstance.post(
       "/easyaccess/purchase-data",
       payload
     );
-    return response.data; // { message, data: ... }
+
+    // Ensure your backend returns the transaction ID (_id)
+    return {
+      message: response.data.message,
+      transactionId: response.data.transactionId,
+    };
   } catch (err: any) {
-    return rejectWithValue(err.response?.data?.error || "Purchase failed");
+    const errorData = err?.response?.data;
+
+    return rejectWithValue({
+      message: errorData?.message || "Purchase failed",
+      transactionId: errorData?.transactionId || "",
+    });
   }
 });
 
-// Purchase data bundle
 export const purchaseAirtime = createAsyncThunk<
-  { message: string },
-  {
-    planId: string;
-    phone: string;
-    userId: string;
-    pinCode: string;
-    amount: string;
-    airtimeType: string;
-  },
-  { rejectValue: string }
+  PurchaseAirtimeResponse,
+  PurchaseAirtimePayload,
+  { rejectValue: PurchaseAirtimeResponse }
 >("dataPlans/purchaseAirtime", async (payload, { rejectWithValue }) => {
   try {
     const response = await axiosInstance.post(
       "/easyaccess/purchase-airtime",
       payload
     );
-    return response.data;
+    return {
+      message: response.data.message,
+      transactionId: response.data.transactionId,
+    };
   } catch (err: any) {
-    return rejectWithValue(err.response?.data?.error || "Purchase failed");
+    const errorData = err?.response?.data;
+
+    return rejectWithValue({
+      message: errorData?.message || "Purchase failed",
+      transactionId: errorData?.transactionId || "",
+    });
   }
 });
 
@@ -455,7 +488,7 @@ const dataPlansSlice = createSlice({
       })
       .addCase(purchaseData.rejected, (state, action) => {
         state.purchaseLoading = false;
-        state.purchaseError = action.payload as string | null;
+        state.purchaseError = action.payload?.message as any;
       })
       .addCase(getDataServices.fulfilled, (state, action) => {
         state.dataServices = action.payload;

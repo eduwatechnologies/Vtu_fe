@@ -21,7 +21,7 @@ function TransactionContent() {
 
   useEffect(() => {
     if (requestId) {
-      dispatch(fetchTransactionById({ request_id: requestId }));
+      dispatch(fetchTransactionById({ _id: requestId }));
     }
   }, [dispatch, requestId]);
 
@@ -116,7 +116,7 @@ function TransactionContent() {
             />
             <RenderTrans
               title="Product Name:"
-              name={transaction?.product_name || "N/A"}
+              name={transaction?.network || "N/A"}
             />
             <RenderTrans title="Phone:" name={transaction?.phone || "N/A"} />
             <RenderTrans
