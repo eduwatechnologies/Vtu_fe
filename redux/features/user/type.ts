@@ -1,5 +1,5 @@
 export interface User {
-  _id:string,
+  _id: string;
   id: string;
   firstName: string;
   lastName: string;
@@ -10,12 +10,10 @@ export interface User {
   bonus: number;
   referralCode: string;
   pinStatus: boolean;
-  account?: [
-    {
-      bankName: string;
-      accountNumber: string;
-      accountName: string;
-      virtualAccountId: string;
-    }
-  ];
+  account?: {
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
+    virtualAccountId: string;
+  };
 }

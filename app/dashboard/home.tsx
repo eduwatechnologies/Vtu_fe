@@ -22,22 +22,14 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import ApHomeHeader from "../../components/homeHeader";
-import TopSheetModal from "@/components/modal/topsheetModal";
 import { useEffect, useState } from "react";
 import { fetchUserTransactions } from "@/redux/features/transaction/transactionSlice";
 import { NotificationModal } from "@/components/modal/notificationModal";
 import { addPin, currentUser } from "@/redux/features/user/userThunk";
 import { getLatestNotification } from "@/redux/features/notifications/notificationSlice";
-import { ApTextInput } from "@/components/input/textInput";
-import { Formik, Form } from "formik";
-import { ApButton } from "@/components/button/button";
-import { toast } from "react-toastify";
 
 export const HomeDashboard = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
-  const [pinModalOpen, setPinModalOpen] = useState(false);
-
   const { notification } = useSelector(
     (state: RootState) => state.notifications
   );
@@ -121,13 +113,14 @@ export const HomeDashboard = () => {
         </div>
         {/* PalmPay account details */}
         <div className="mt-4 bg-white/10 backdrop-blur-sm rounded-lg p-3 text-sm">
-          <p className="font-semibold">PalmPay Account:</p>
+          <p className="font-semibold">{user?.account?.bankName as any}</p>
           <div className="flex justify-between items-center">
             <p className="mt-1 opacity-90">
-              <span className="font-medium">Acc No:</span> 1234567890
+              <span className="font-medium">Acc No:</span>{" "}
+              {user?.account?.accountNumber}
             </p>
             <p className="opacity-90">
-              <span className="font-medium"></span> Abdulazeez Sodiq
+              <span className="font-medium"></span> {user?.account?.accountName}
             </p>
           </div>
         </div>
@@ -215,6 +208,10 @@ export const HomeDashboard = () => {
                     </div>
                     <div>
                       <p className="text-sm font-medium">{tx?.product_name}</p>
+                      <p className="text-sm font-semibold">
+                        {tx?.service.charAt(0).toUpperCase() +
+                          tx?.service.slice(1).toLowerCase()}
+                      </p>
                       <p className="text-xs text-gray-500">
                         {new Date(tx?.transaction_date).toLocaleString()}
                       </p>
