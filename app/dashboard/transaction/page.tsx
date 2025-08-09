@@ -112,13 +112,16 @@ function TransactionContent() {
           <div className="w-full mt-4 space-y-4">
             <RenderTrans
               title="Transaction ID:"
-              name={transaction?.request_id || "N/A"}
+              name={transaction?._id || "N/A"}
             />
-            <RenderTrans
+            {/* <RenderTrans
               title="Product Name:"
-              name={transaction?.network || "N/A"}
+              name={transaction?.network.toUpperCase() || "N/A"}
+            /> */}
+            <RenderTrans
+              title="Phone:"
+              name={transaction?.mobile_no || "N/A"}
             />
-            <RenderTrans title="Phone:" name={transaction?.phone || "N/A"} />
             <RenderTrans
               title="Amount:"
               name={transaction?.amount?.toString() || "N/A"}

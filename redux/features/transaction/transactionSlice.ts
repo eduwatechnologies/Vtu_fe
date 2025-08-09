@@ -53,6 +53,7 @@ interface Transaction {
   amount: number;
   email: string;
   phone: string;
+  mobile_no: string;
   transaction_date: string;
   request_id: string;
   token: string;
