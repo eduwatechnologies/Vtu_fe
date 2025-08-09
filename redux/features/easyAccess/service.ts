@@ -5,6 +5,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 interface FetchDataPlansArgs {
   network?: string; // optional, can be used as query
   category?: string; // SME, gifting, etc.
+  serviceType?: string;
 }
 
 interface PlansResponse {
@@ -47,11 +48,13 @@ export const fetchDataPlans = createAsyncThunk<
   async ({ network, category }, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams();
-      params.append("serviceType", "data");
+      // params.append("serviceType", serviceType);
       if (network) params.append("network", network);
       if (category) params.append("category", category);
 
-      const response = await axiosInstance.get(`/plans?${params.toString()}`);
+      const response = await axiosInstance.get(
+        `/plans/plans?${params.toString()}`
+      );
       return response.data;
     } catch (err: any) {
       return rejectWithValue(
@@ -247,13 +250,11 @@ export const getDataServices = createAsyncThunk(
         (item: any) => item.serviceId?.type === data
       );
 
-      console.log(dataServices, "data");
-
       // image map
       const serviceImages: Record<string, string> = {
         mtn: "/images/mtn.png",
-        airtel: "/images/airtel.png",
         glo: "/images/glo.jpg",
+        airtel: "/images/airtel.png",
         "9mobile": "/images/9mobile.jpeg",
       };
 

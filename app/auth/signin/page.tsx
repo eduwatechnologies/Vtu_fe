@@ -25,10 +25,10 @@ export default function SignIn() {
   const handleSubmit = async (values: any) => {
     const resultAction = await dispatch(loginUser(values));
     if (loginUser.fulfilled.match(resultAction)) {
-      toast.success("✅ Login successful");
+      toast.success("Login successful");
       router.push("/dashboard");
     } else {
-      toast.error(`❌ ${resultAction.payload || "Login failed"}`);
+      toast.error(` ${resultAction.payload || "Login failed"}`);
     }
   };
 

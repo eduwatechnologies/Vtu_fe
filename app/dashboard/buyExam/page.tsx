@@ -11,11 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { ApButton } from "@/components/button/button";
 import ApHeader from "@/components/Apheader";
 import {
+  fetchDataPlans,
   getExamServices,
   purchaseExam,
 } from "@/redux/features/easyAccess/service";
-
-const PIN_PRICE = 3300; // unit price per pin
 
 export default function BuyExam() {
   const [loading, setLoading] = useState(false);
@@ -24,6 +23,9 @@ export default function BuyExam() {
   const [pinCode, setPinCode] = useState("");
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [formData, setFormData] = useState<any | null>(null);
+
+  // amount & unit price start at 0 so we don't get NaN
+  const [unitPrice, setUnitPrice] = useState<number>(0);
 
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
@@ -46,17 +48,33 @@ export default function BuyExam() {
       .required("Phone number is required"),
   });
 
+  const handleCategorySelect = async (category: string) => {
+    try {
+      const result = await dispatch(
+        fetchDataPlans({ category: category, network: category })
+      );
+      if (fetchDataPlans.fulfilled.match(result)) {
+        const fetchedPrice = result.payload.plans[0]?.ourPrice || 0;
+        setUnitPrice(fetchedPrice);
+      } else {
+        toast.error(result.payload || "Failed to fetch plans");
+      }
+    } catch {
+      toast.error("Unexpected error while fetching plans");
+    }
+  };
+
   const handleFormSubmit = async (values: any) => {
     if (!pinCode || pinCode.length !== 4) {
       toast.error("Please enter a valid 4-digit PIN");
       return;
     }
 
-    const amount = values.quantity * PIN_PRICE;
+    const totalAmount = values.quantity * unitPrice;
 
     const payload = {
       type: selectedExam.toLowerCase(),
-      amount,
+      amount: totalAmount,
       phone: values.phone.trim(),
       userId: user?._id,
       planId: selectedPlanId,
@@ -81,16 +99,16 @@ export default function BuyExam() {
     <div className="min-h-screen bg-white">
       <ApHeader title="Buy Exam Card" />
       <div className="flex justify-center">
-        <div className="bg-white p-6  w-96">
+        <div className="bg-white p-6 w-96">
           <p className="text-sm text-gray-600 text-center py-2 mb-4">
             Select your exam type, enter your number, and get pins instantly.
           </p>
 
-          {/* Form */}
           <Formik
             initialValues={{
               quantity: "",
               phone: "",
+              type: "",
             }}
             validationSchema={validationSchema}
             onSubmit={(values) => {
@@ -100,7 +118,7 @@ export default function BuyExam() {
           >
             {({ values, setFieldValue }) => {
               const computedAmount = values.quantity
-                ? Number(values.quantity) * PIN_PRICE
+                ? Number(values.quantity) * unitPrice
                 : 0;
 
               return (
@@ -120,6 +138,9 @@ export default function BuyExam() {
                           setSelectedExam(exam.code);
                           setSelectedPlanId(exam?._id);
                           setFieldValue("type", exam.code);
+                          handleCategorySelect(
+                            exam.name.replace(" PIN", "").toLowerCase()
+                          );
                         }}
                       >
                         <img
@@ -136,7 +157,7 @@ export default function BuyExam() {
                     name="type"
                     type="text"
                     placeHolder="Enter Exam Type"
-                    readOnly={true}
+                    readOnly
                   />
 
                   <ApTextInput
@@ -153,7 +174,22 @@ export default function BuyExam() {
                     placeHolder="Enter phone number"
                   />
 
-                  {/* Computed amount (read-only) */}
+                  {/* Show unit price */}
+                  {unitPrice > 0 && (
+                    <div className="mt-3">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Unit Price
+                      </label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={`₦${unitPrice}`}
+                        className="mt-1 p-2 border border-gray-300 rounded-md w-full bg-gray-100"
+                      />
+                    </div>
+                  )}
+
+                  {/* Computed total amount */}
                   <div className="mt-3">
                     <label className="block text-sm font-medium text-gray-700">
                       Total Amount
@@ -161,7 +197,7 @@ export default function BuyExam() {
                     <input
                       type="text"
                       readOnly
-                      value={computedAmount ? `₦${computedAmount}` : ""}
+                      value={computedAmount > 0 ? `₦${computedAmount}` : ""}
                       className="mt-1 p-2 border border-gray-300 rounded-md w-full bg-gray-100"
                     />
                   </div>

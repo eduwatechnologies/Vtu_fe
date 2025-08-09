@@ -153,18 +153,6 @@ export default function EasyAccessBuyData() {
       setLoading(true);
       const resultAction = await dispatch(purchaseData(payload as any));
 
-      // if (purchaseData.fulfilled.match(resultAction)) {
-      //   toast.success("Data purchase successful!");
-      //   const { transactionId } = resultAction.payload;
-      //   router.push(`/dashboard/transaction?request_id=${transactionId}`);
-      // } else {
-      //   toast.error(resultAction.payload?.message || "Purchase failed!");
-      //   const transactionId = resultAction.payload?.transactionId;
-      //   if (transactionId) {
-      //     router.push(`/dashboard/transaction?request_id=${transactionId}`);
-      //   }
-      // }
-
       if (purchaseData.fulfilled.match(resultAction)) {
         // Success
         toast.success("Data purchase successful!");
