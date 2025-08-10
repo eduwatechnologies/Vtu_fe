@@ -8,6 +8,8 @@ import { AppDispatch } from "@/redux/store";
 import { updatePassword } from "@/redux/features/user/userThunk";
 import { toast } from "react-toastify";
 import { ApTextInput } from "@/components/input/textInput";
+import { ApButton } from "@/components/button/button";
+
 
 export default function UpdatePassword() {
   const dispatch = useDispatch<AppDispatch>();
@@ -81,13 +83,14 @@ export default function UpdatePassword() {
               type="password"
               placeHolder="Confirm new password"
             />
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition disabled:bg-blue-300"
-            >
-              {isSubmitting ? "Updating..." : "Update Password"}
-            </button>
+        
+
+              <ApButton
+                type="submit"
+                title={isSubmitting ? "Updating..." : "Update Password"}
+                disabled={isSubmitting}
+                className="w-full"
+              />
           </Form>
         )}
       </Formik>

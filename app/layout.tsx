@@ -31,13 +31,13 @@ export const metadata: Metadata = {
   icons: {
     icon: "/images/logo.png",
   },
-  metadataBase: new URL("https://mypayonce.vercel.app"),
+  metadataBase: new URL("https://www.almaleek.com.ng/"),
   openGraph: {
-    title: "PayOnce – Instant VTU Recharge, Bills & More",
+    title: "Almaleek – Instant VTU Recharge, Bills & More",
     description:
       "Fast, reliable and affordable virtual top-up (VTU) services including airtime, data, electricity, education and TV subscriptions.",
-    url: "https://mypayonce.vercel.app/",
-    siteName: "PayOnce",
+    url: "https://www.almaleek.com.ng/",
+    siteName: "Almaleek TopUp",
     type: "website",
     locale: "en_NG",
   },
