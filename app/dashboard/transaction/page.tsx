@@ -4,10 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchTransactionById } from "@/redux/features/transaction/transactionSlice";
-import ApHeader from "../../../components/Apheader";
-import { CheckCircle, Clock, Download, XCircle } from "lucide-react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import ApHeader from "@/components/Apheader";
+import { CheckCircle, Clock, XCircle } from "lucide-react";
 import ApLoader from "@/components/loader";
 
 function TransactionContent() {
@@ -17,7 +15,7 @@ function TransactionContent() {
   const { transaction, loading } = useSelector(
     (state: RootState) => state.transactions
   );
-  const receiptRef = useRef(null);
+  const receiptRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (requestId) {
@@ -26,42 +24,67 @@ function TransactionContent() {
   }, [dispatch, requestId]);
 
   const RenderTrans = ({ title, name }: { title: string; name: string }) => (
-    <div className="flex justify-between">
-      <p>
-        <strong>{title}</strong>
-      </p>
+    <div className="flex justify-between text-sm md:text-base">
+      <p className="font-medium">{title}</p>
       <p>{name}</p>
     </div>
   );
 
-  // const handleDownload = async () => {
-  //   if (receiptRef.current) {
-  //     try {
-  //       const canvas = await html2canvas(receiptRef.current);
-  //       const imgData = canvas.toDataURL("image/png");
+  const renderServiceFields = () => {
+    if (!transaction) return null;
 
-  //       // Check if the canvas is generated correctly
-  //       console.log("Canvas generated:", canvas);
+    switch (transaction.service) {
+      case "wallet":
+        return (
+          <>
+            <RenderTrans title="Transaction Type:" name={transaction.transaction_type || "N/A"} />
+            <RenderTrans title="Previous Balance:" name={transaction.previous_balance?.toString() || "N/A"} />
+            <RenderTrans title="New Balance:" name={transaction.new_balance?.toString() || "N/A"} />
+            <RenderTrans title="Note:" name={transaction.note || "N/A"} />
+          </>
+        );
 
-  //       const pdf = new jsPDF();
-  //       const imgProps = pdf.getImageProperties(imgData);
-  //       const pdfWidth = pdf.internal.pageSize.getWidth();
-  //       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      case "airtime":
+        return (
+          <>
+            <RenderTrans title="Network:" name={transaction.network?.toUpperCase() || "N/A"} />
+            <RenderTrans title="Phone:" name={transaction.mobile_no || "N/A"} />
+          </>
+        );
 
-  //       // Adding image to PDF
-  //       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-  //       pdf.save("transaction-receipt.pdf");
-  //     } catch (error) {
-  //       console.error("Error generating PDF:", error);
-  //     }
-  //   } else {
-  //     console.log("Receipt ref is not set.");
-  //   }
-  // };
+      case "data":
+        return (
+          <>
+            <RenderTrans title="Network:" name={transaction.network?.toUpperCase() || "N/A"} />
+            <RenderTrans title="Phone:" name={transaction.mobile_no || "N/A"} />
+            <RenderTrans title="Data Plan:" name={transaction.data_type || "N/A"} />
+          </>
+        );
 
-  if (loading) {
-    return <ApLoader />;
-  }
+      case "electricity":
+        return (
+          <>
+            <RenderTrans title="Meter No:" name={transaction.meter_no || "N/A"} />
+            <RenderTrans title="Token:" name={transaction.token || "N/A"} />
+            <RenderTrans title="Customer Name:" name={transaction.customer_name || "N/A"} />
+          </>
+        );
+
+      case "exam_pin":
+        return (
+          <>
+            <RenderTrans title="WAEC PIN:" name={transaction.waec_pin || "N/A"} />
+            <RenderTrans title="NECO Token:" name={transaction.neco_token || "N/A"} />
+            <RenderTrans title="NABTEB PIN:" name={transaction.nabteb_pin || "N/A"} />
+          </>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  if (loading) return <ApLoader />;
 
   return (
     <div>
@@ -71,11 +94,11 @@ function TransactionContent() {
         className="mt-6 bg-white p-6 rounded-lg shadow-xl max-w-4xl mx-auto"
         ref={receiptRef}
       >
+        {/* Status Section */}
         <div className="flex flex-col items-center justify-center space-y-4">
-          {/* Status Display */}
           <div className="flex items-center space-x-2">
             {transaction?.status === "success" && (
-              <div className="flex flex-col items-center ">
+              <div className="flex flex-col items-center">
                 <CheckCircle size={40} className="text-green-600" />
                 <p className="font-semibold text-xl text-green-700">
                   Transaction Successful
@@ -84,16 +107,16 @@ function TransactionContent() {
             )}
 
             {transaction?.status === "pending" && (
-              <>
+              <div className="flex flex-col items-center">
                 <Clock size={40} className="text-yellow-600" />
                 <p className="font-semibold text-xl text-yellow-700">
                   Transaction Pending
                 </p>
-              </>
+              </div>
             )}
 
             {transaction?.status === "failed" && (
-              <div className="flex flex-col items-center ">
+              <div className="flex flex-col items-center">
                 <XCircle size={40} className="text-red-600" />
                 <p className="font-semibold text-xl text-red-700">
                   Transaction Failed
@@ -102,36 +125,31 @@ function TransactionContent() {
             )}
           </div>
 
+          {/* Badge for Service Type */}
+          <span className="px-3 py-1 bg-gray-100 text-sm rounded-full capitalize">
+            {transaction?.service || "N/A"}
+          </span>
+
           {/* Description */}
           <p className="text-center text-sm text-gray-600">
             Thank you for choosing our service! We appreciate your trust and
             look forward to serving you again.
           </p>
 
-          {/* Transaction Details */}
+          {/* Common Transaction Details */}
           <div className="w-full mt-4 space-y-4">
             <RenderTrans
               title="Transaction ID:"
-              name={transaction?.client_reference || "N/A"}
-            />
-            <RenderTrans
-              title="Network:"
-              name={transaction?.network.toUpperCase() || "N/A"}
-            />
-            <RenderTrans
-              title="Phone:"
-              name={transaction?.mobile_no || "N/A"}
+              name={transaction?.client_reference || transaction?.reference_no || "N/A"}
             />
             <RenderTrans
               title="Amount:"
-              name={transaction?.amount?.toString() || "N/A"}
+              name={
+                transaction?.amount
+                  ? `₦${transaction.amount.toLocaleString()}`
+                  : "N/A"
+              }
             />
-            {transaction?.dataName && (
-              <RenderTrans title="Data Plan:" name={transaction.dataName} />
-            )}
-            {transaction?.token && (
-              <RenderTrans title="Token:" name={transaction.token} />
-            )}
             <RenderTrans
               title="Date:"
               name={
@@ -140,18 +158,11 @@ function TransactionContent() {
                   : "N/A"
               }
             />
+
+            {/* Service Specific Fields */}
+            {renderServiceFields()}
           </div>
         </div>
-
-        {/* Action Buttons */}
-        {/* <div className="flex justify-center gap-6 mt-8">
-          <button
-            onClick={handleDownload}
-            className="flex items-center gap-3 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
-          >
-            <Download size={18} /> Download PDF
-          </button>
-        </div> */}
       </div>
     </div>
   );

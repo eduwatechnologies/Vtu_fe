@@ -12,7 +12,6 @@ import logo from "@/public/images/logo.png";
 import Image from "next/image";
 import Link from "next/link";
 
-
 export default function SignUp() {
   const dispatch = useDispatch<AppDispatch>();
   const { loading } = useSelector((state: RootState) => state.auth);
@@ -23,7 +22,9 @@ export default function SignUp() {
     lastName: Yup.string().required("Last name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
     state: Yup.string().required("State is required"),
-    phone: Yup.string().required("Phone number is required"),
+    phone: Yup.string()
+      .matches(/^\d{11}$/, "Phone number must be exactly 11 digits")
+      .required("Phone number is required"),
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
@@ -33,10 +34,10 @@ export default function SignUp() {
     referralCode: Yup.string()
       .matches(/^[a-zA-Z0-9]*$/, "Referral code must be alphanumeric")
       .optional(),
-    pinCode: Yup.string().matches(
-      /^\d{4}$/,
-      "PIN code must be exactly 4 digits"
-    ),
+    pinCode: Yup.string()
+      .matches(/^\d{4}$/, "PIN code must be exactly 4 digits")
+      .nullable()
+      .notRequired(),
   });
 
   // ✅ Form Submission Handler
