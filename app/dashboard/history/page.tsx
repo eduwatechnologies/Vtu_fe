@@ -20,7 +20,7 @@ export default function HistoryPage() {
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
-      case "delivered":
+      case "success":
         return "text-green-500 bg-green-100";
       case "failed":
         return "text-red-500 bg-red-100";
@@ -31,7 +31,7 @@ export default function HistoryPage() {
 
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
-      case "successful":
+      case "success":
         return <CheckCircle className="text-green-500 w-5 h-5" />;
       case "failed":
         return <XCircle className="text-red-500 w-5 h-5" />;

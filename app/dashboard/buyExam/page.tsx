@@ -56,6 +56,7 @@ export default function BuyExam() {
       if (fetchDataPlans.fulfilled.match(result)) {
         const fetchedPrice = result.payload.plans[0]?.ourPrice || 0;
         setUnitPrice(fetchedPrice);
+        console.log(unitPrice);
       } else {
         toast.error(result.payload || "Failed to fetch plans");
       }

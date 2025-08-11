@@ -46,6 +46,7 @@ export const fetchUserTransactions = createAsyncThunk(
 
 interface Transaction {
   _id: string;
+  client_reference: string;
   network: string;
   unique_element: string;
   unit_price: string;

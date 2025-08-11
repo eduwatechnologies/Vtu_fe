@@ -34,30 +34,30 @@ function TransactionContent() {
     </div>
   );
 
-  const handleDownload = async () => {
-    if (receiptRef.current) {
-      try {
-        const canvas = await html2canvas(receiptRef.current);
-        const imgData = canvas.toDataURL("image/png");
+  // const handleDownload = async () => {
+  //   if (receiptRef.current) {
+  //     try {
+  //       const canvas = await html2canvas(receiptRef.current);
+  //       const imgData = canvas.toDataURL("image/png");
 
-        // Check if the canvas is generated correctly
-        console.log("Canvas generated:", canvas);
+  //       // Check if the canvas is generated correctly
+  //       console.log("Canvas generated:", canvas);
 
-        const pdf = new jsPDF();
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  //       const pdf = new jsPDF();
+  //       const imgProps = pdf.getImageProperties(imgData);
+  //       const pdfWidth = pdf.internal.pageSize.getWidth();
+  //       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-        // Adding image to PDF
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save("transaction-receipt.pdf");
-      } catch (error) {
-        console.error("Error generating PDF:", error);
-      }
-    } else {
-      console.log("Receipt ref is not set.");
-    }
-  };
+  //       // Adding image to PDF
+  //       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+  //       pdf.save("transaction-receipt.pdf");
+  //     } catch (error) {
+  //       console.error("Error generating PDF:", error);
+  //     }
+  //   } else {
+  //     console.log("Receipt ref is not set.");
+  //   }
+  // };
 
   if (loading) {
     return <ApLoader />;
@@ -74,13 +74,13 @@ function TransactionContent() {
         <div className="flex flex-col items-center justify-center space-y-4">
           {/* Status Display */}
           <div className="flex items-center space-x-2">
-            {transaction?.status === "delivered" && (
-              <>
+            {transaction?.status === "success" && (
+              <div className="flex flex-col items-center ">
                 <CheckCircle size={40} className="text-green-600" />
                 <p className="font-semibold text-xl text-green-700">
                   Transaction Successful
                 </p>
-              </>
+              </div>
             )}
 
             {transaction?.status === "pending" && (
@@ -93,12 +93,12 @@ function TransactionContent() {
             )}
 
             {transaction?.status === "failed" && (
-              <>
+              <div className="flex flex-col items-center ">
                 <XCircle size={40} className="text-red-600" />
                 <p className="font-semibold text-xl text-red-700">
                   Transaction Failed
                 </p>
-              </>
+              </div>
             )}
           </div>
 
@@ -112,12 +112,12 @@ function TransactionContent() {
           <div className="w-full mt-4 space-y-4">
             <RenderTrans
               title="Transaction ID:"
-              name={transaction?._id || "N/A"}
+              name={transaction?.client_reference || "N/A"}
             />
-            {/* <RenderTrans
-              title="Product Name:"
+            <RenderTrans
+              title="Network:"
               name={transaction?.network.toUpperCase() || "N/A"}
-            /> */}
+            />
             <RenderTrans
               title="Phone:"
               name={transaction?.mobile_no || "N/A"}

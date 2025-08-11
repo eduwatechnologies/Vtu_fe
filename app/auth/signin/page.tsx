@@ -36,7 +36,7 @@ export default function SignIn() {
     <div className="flex justify-center items-center ">
       <div className="bg-white/40 p-6 rounded-lg  w-full max-w-sm">
         <div className="flex justify-center mb-4">
-          <Image src={logo} alt="PayOnce logo" width={50} height={40} />
+          <Image src={logo} alt="Almaleek logo" width={50} height={40} />
         </div>
         <h2 className="text-2xl font-semibold text-center mb-2">Sign In</h2>
         <p className="text-center text-sm text-gray-600 mb-6">
