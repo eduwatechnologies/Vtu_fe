@@ -37,17 +37,29 @@ function TransactionContent() {
       case "wallet":
         return (
           <>
-            <RenderTrans title="Transaction Type:" name={transaction.transaction_type || "N/A"} />
-            <RenderTrans title="Previous Balance:" name={transaction.previous_balance?.toString() || "N/A"} />
-            <RenderTrans title="New Balance:" name={transaction.new_balance?.toString() || "N/A"} />
-            <RenderTrans title="Note:" name={transaction.note || "N/A"} />
+            <RenderTrans
+              title="Transaction Type:"
+              name={transaction.transaction_type || "N/A"}
+            />
+            <RenderTrans
+              title="Previous Balance:"
+              name={transaction.previous_balance?.toString() || "N/A"}
+            />
+            <RenderTrans
+              title="New Balance:"
+              name={transaction.new_balance?.toString() || "N/A"}
+            />
+            {/* <RenderTrans title="Note:" name={transaction.note || "N/A"} /> */}
           </>
         );
 
       case "airtime":
         return (
           <>
-            <RenderTrans title="Network:" name={transaction.network?.toUpperCase() || "N/A"} />
+            <RenderTrans
+              title="Network:"
+              name={transaction.network?.toUpperCase() || "N/A"}
+            />
             <RenderTrans title="Phone:" name={transaction.mobile_no || "N/A"} />
           </>
         );
@@ -55,27 +67,48 @@ function TransactionContent() {
       case "data":
         return (
           <>
-            <RenderTrans title="Network:" name={transaction.network?.toUpperCase() || "N/A"} />
+            <RenderTrans
+              title="Network:"
+              name={transaction.network?.toUpperCase() || "N/A"}
+            />
             <RenderTrans title="Phone:" name={transaction.mobile_no || "N/A"} />
-            <RenderTrans title="Data Plan:" name={transaction.data_type || "N/A"} />
+            <RenderTrans
+              title="Data Plan:"
+              name={transaction.data_type || "N/A"}
+            />
           </>
         );
 
       case "electricity":
         return (
           <>
-            <RenderTrans title="Meter No:" name={transaction.meter_no || "N/A"} />
+            <RenderTrans
+              title="Meter No:"
+              name={transaction.meter_no || "N/A"}
+            />
             <RenderTrans title="Token:" name={transaction.token || "N/A"} />
-            <RenderTrans title="Customer Name:" name={transaction.customer_name || "N/A"} />
+            <RenderTrans
+              title="Customer Name:"
+              name={transaction.customer_name || "N/A"}
+            />
           </>
         );
 
       case "exam_pin":
         return (
           <>
-            <RenderTrans title="WAEC PIN:" name={transaction.waec_pin || "N/A"} />
-            <RenderTrans title="NECO Token:" name={transaction.neco_token || "N/A"} />
-            <RenderTrans title="NABTEB PIN:" name={transaction.nabteb_pin || "N/A"} />
+            <RenderTrans
+              title="WAEC PIN:"
+              name={transaction.waec_pin || "N/A"}
+            />
+            <RenderTrans
+              title="NECO Token:"
+              name={transaction.neco_token || "N/A"}
+            />
+            <RenderTrans
+              title="NABTEB PIN:"
+              name={transaction.nabteb_pin || "N/A"}
+            />
           </>
         );
 
@@ -87,7 +120,7 @@ function TransactionContent() {
   if (loading) return <ApLoader />;
 
   return (
-    <div>
+    <div className="mb-20">
       <ApHeader title="Transaction Details" />
 
       <div
@@ -139,8 +172,12 @@ function TransactionContent() {
           {/* Common Transaction Details */}
           <div className="w-full mt-4 space-y-4">
             <RenderTrans
-              title="Transaction ID:"
-              name={transaction?.client_reference || transaction?.reference_no || "N/A"}
+              title="Ref_No:"
+              name={
+                transaction?.client_reference ||
+                transaction?.reference_no ||
+                "N/A"
+              }
             />
             <RenderTrans
               title="Amount:"

@@ -46,20 +46,56 @@ export const fetchUserTransactions = createAsyncThunk(
 
 interface Transaction {
   _id: string;
-  client_reference: string;
-  network: string;
-  unique_element: string;
-  unit_price: string;
-  quantity: number;
-  amount: number;
-  email: string;
-  phone: string;
-  mobile_no: string;
-  transaction_date: string;
-  request_id: string;
-  token: string;
-  dataName: string;
-  status: string;
+  userId: string;
+  service:
+    | "airtime"
+    | "data"
+    | "data_card"
+    | "cable_tv"
+    | "electricity"
+    | "exam_pin"
+    | "wallet";
+  message?: string;
+  amount?: number;
+  reference_no?: string;
+  status?: string;
+  transaction_date?: string;
+  raw_response?: string;
+  client_reference?: string;
+
+  // Airtime & Data
+  network?: string;
+  mobile_no?: string;
+  data_type?: string;
+
+  // Data Card
+  pin?: string;
+
+  // Cable TV
+  company?: string;
+  package?: string;
+  iucno?: string;
+
+  // Electricity
+  meter_type?: string;
+  meter_no?: string;
+  token?: string;
+  customer_name?: string;
+  customer_address?: string;
+
+  // Exam PINs
+  waec_pin?: string;
+  neco_token?: string;
+  nabteb_pin?: string;
+  nbais_pin?: string;
+
+  // Wallet Transactions
+  transaction_type?: string;
+  previous_balance?: number;
+  new_balance?: number;
+  note?: string;
+
+  [key: string]: any; // Safety for future expansion
 }
 
 interface TransactionState {
@@ -75,6 +111,13 @@ const initialState: TransactionState = {
   loading: false,
   error: null,
 };
+
+interface TransactionState {
+  transactions: Transaction[];
+  transaction: Transaction | null;
+  loading: boolean;
+  error: string | null;
+}
 
 const transactionSlice = createSlice({
   name: "transactions",
