@@ -33,7 +33,7 @@ type PurchaseAirtimePayload = {
 
 type PurchaseAirtimeResponse = {
   message?: string;
-  error?:string;
+  error?: string;
   transactionId: string;
 };
 
@@ -95,7 +95,7 @@ export const fetchDataCategories = createAsyncThunk<
 
 // Purchase data bundle
 export const purchaseData = createAsyncThunk<
-  { message: string; transactionId: string, error:string }, // 👈 include transactionId
+  { message: string; transactionId: string }, // 👈 include transactionId
   {
     planId: string;
     phone: string;
@@ -105,7 +105,7 @@ export const purchaseData = createAsyncThunk<
     dataType?: string;
     amount?: string;
   },
-  { rejectValue: { message: string; transactionId?: string } }
+  { rejectValue: { message: string; transactionId?: string; error: string } }
 >("dataPlans/purchaseData", async (payload, { rejectWithValue }) => {
   try {
     const response = await axiosInstance.post(
@@ -122,15 +122,14 @@ export const purchaseData = createAsyncThunk<
 
     return rejectWithValue({
       message: errorData?.message || "Purchase failed",
-      error:errorData.error,
+      error: errorData.error,
       transactionId: errorData?.transactionId || "",
     });
   }
 });
 
 export const purchaseAirtime = createAsyncThunk<
-  { message: string; transactionId: string, error:string }, // 👈 include transactionId
-
+  { message: string; transactionId: string }, // 👈 include transactionId
   PurchaseAirtimePayload,
   { rejectValue: PurchaseAirtimeResponse }
 >("dataPlans/purchaseAirtime", async (payload, { rejectWithValue }) => {
@@ -148,7 +147,7 @@ export const purchaseAirtime = createAsyncThunk<
 
     return rejectWithValue({
       message: errorData?.message || "Purchase failed",
-      error:errorData.error,
+      error: errorData.error,
       transactionId: errorData?.transactionId || "",
     });
   }
@@ -209,7 +208,10 @@ export const handleVerifyMeter = createAsyncThunk(
 
 export const purchaseElectricity = createAsyncThunk(
   "dataPlans/purchaseElectricity",
-  async ({ payload }: { payload: any }, { rejectWithValue }) => {
+  async (
+    { payload }: { payload: any; rejectWithValue: PurchaseAirtimeResponse },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axiosInstance.post(
         "/easyaccess/purchase-electricity",
@@ -492,11 +494,10 @@ const dataPlansSlice = createSlice({
       })
       .addCase(purchaseData.rejected, (state, action) => {
         state.purchaseLoading = false;
-        state.purchaseError = action.payload?.error;
+        state.purchaseError = action.payload?.error as any;
       })
 
-
-       .addCase(purchaseAirtime.pending, (state) => {
+      .addCase(purchaseAirtime.pending, (state) => {
         state.purchaseLoading = true;
         state.purchaseStatus = null;
         state.purchaseError = null;
@@ -507,9 +508,22 @@ const dataPlansSlice = createSlice({
       })
       .addCase(purchaseAirtime.rejected, (state, action) => {
         state.purchaseLoading = false;
-        state.purchaseError = action.payload?.error;
+        state.purchaseError = action.payload?.error as any;
       })
 
+      .addCase(purchaseElectricity.pending, (state) => {
+        state.purchaseLoading = true;
+        state.purchaseStatus = null;
+        state.purchaseError = null;
+      })
+      .addCase(purchaseElectricity.fulfilled, (state, action) => {
+        state.purchaseLoading = false;
+        state.purchaseStatus = action.payload?.message;
+      })
+      .addCase(purchaseElectricity.rejected, (state, action) => {
+        state.purchaseLoading = false;
+        // state.purchaseError = action.payload?.error as any;
+      })
 
       .addCase(getDataServices.fulfilled, (state, action) => {
         state.dataServices = action.payload;
