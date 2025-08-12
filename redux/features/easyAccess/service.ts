@@ -208,10 +208,7 @@ export const handleVerifyMeter = createAsyncThunk(
 
 export const purchaseElectricity = createAsyncThunk(
   "dataPlans/purchaseElectricity",
-  async (
-    { payload }: { payload: any; rejectWithValue: PurchaseAirtimeResponse },
-    { rejectWithValue }
-  ) => {
+  async ({ payload }: { payload: any }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
         "/easyaccess/purchase-electricity",
@@ -511,19 +508,19 @@ const dataPlansSlice = createSlice({
         state.purchaseError = action.payload?.error as any;
       })
 
-      .addCase(purchaseElectricity.pending, (state) => {
-        state.purchaseLoading = true;
-        state.purchaseStatus = null;
-        state.purchaseError = null;
-      })
-      .addCase(purchaseElectricity.fulfilled, (state, action) => {
-        state.purchaseLoading = false;
-        state.purchaseStatus = action.payload?.message;
-      })
-      .addCase(purchaseElectricity.rejected, (state, action) => {
-        state.purchaseLoading = false;
-        // state.purchaseError = action.payload?.error as any;
-      })
+      // .addCase(purchaseElectricity.pending, (state) => {
+      //   state.purchaseLoading = true;
+      //   state.purchaseStatus = null;
+      //   state.purchaseError = null;
+      // })
+      // .addCase(purchaseElectricity.fulfilled, (state, action) => {
+      //   state.purchaseLoading = false;
+      //   state.purchaseStatus = action.payload?.message;
+      // })
+      // .addCase(purchaseElectricity.rejected, (state, action) => {
+      //   state.purchaseLoading = false;
+      //   // state.purchaseError = action.payload?.error as any;
+      // })
 
       .addCase(getDataServices.fulfilled, (state, action) => {
         state.dataServices = action.payload;
