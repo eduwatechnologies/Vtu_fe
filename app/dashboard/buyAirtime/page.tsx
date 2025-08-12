@@ -109,9 +109,8 @@ export default function BuyAirtime() {
         toast.success("✅ Airtime purchase successful!");
         router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
-        const errorMessage =
-          resultAction.payload?.message || "Purchase failed!";
-        toast.error(errorMessage);
+         toast.error(resultAction.payload?.error || "Purchase failed...!")
+       
         const transactionId = resultAction.payload?.transactionId;
         if (transactionId) {
           router.push(`/dashboard/transaction?request_id=${transactionId}`);

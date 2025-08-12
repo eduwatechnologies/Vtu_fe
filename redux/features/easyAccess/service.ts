@@ -33,6 +33,7 @@ type PurchaseAirtimePayload = {
 
 type PurchaseAirtimeResponse = {
   message: string;
+  error:string;
   transactionId: string;
 };
 
@@ -145,7 +146,8 @@ export const purchaseAirtime = createAsyncThunk<
     const errorData = err?.response?.data;
 
     return rejectWithValue({
-      message: errorData?.error || "Purchase failed",
+      message: errorData?.message || "Purchase failed",
+      error:errorData.error,
       transactionId: errorData?.transactionId || "",
     });
   }
