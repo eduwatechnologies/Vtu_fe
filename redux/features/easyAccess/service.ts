@@ -95,7 +95,7 @@ export const fetchDataCategories = createAsyncThunk<
 
 // Purchase data bundle
 export const purchaseData = createAsyncThunk<
-  { message: string; transactionId: string }, // 👈 include transactionId
+  { message: string; transactionId: string, error:string }, // 👈 include transactionId
   {
     planId: string;
     phone: string;
