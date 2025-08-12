@@ -129,7 +129,8 @@ export const purchaseData = createAsyncThunk<
 });
 
 export const purchaseAirtime = createAsyncThunk<
-  PurchaseAirtimeResponse,
+  { message: string; transactionId: string, error:string }, // 👈 include transactionId
+
   PurchaseAirtimePayload,
   { rejectValue: PurchaseAirtimeResponse }
 >("dataPlans/purchaseAirtime", async (payload, { rejectWithValue }) => {

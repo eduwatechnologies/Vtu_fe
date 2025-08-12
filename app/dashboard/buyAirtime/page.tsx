@@ -110,8 +110,8 @@ export default function BuyAirtime() {
         router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
          toast.error(resultAction.payload?.error || "Purchase failed...!")
-       
-        const transactionId = resultAction.payload?.transactionId;
+
+            const transactionId = resultAction.payload?.transactionId;
         if (transactionId) {
           router.push(`/dashboard/transaction?request_id=${transactionId}`);
         }
