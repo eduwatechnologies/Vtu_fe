@@ -253,8 +253,8 @@ export const getDataServices = createAsyncThunk(
       // image map
       const serviceImages: Record<string, string> = {
         mtn: "/images/mtn.png",
-        glo: "/images/glo.jpg",
         airtel: "/images/airtel.png",
+        glo: "/images/glo.jpg",
         "9mobile": "/images/9mobile.jpeg",
       };
 

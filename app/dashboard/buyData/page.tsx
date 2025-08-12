@@ -236,9 +236,19 @@ export default function EasyAccessBuyData() {
                   type="text"
                   placeHolder="Enter phone number"
                 />
+
+                <ApTextInput
+                  label="Data Plan"
+                  name="dataName"
+                 readOnly={true}
+                  type="text"
+                  placeHolder="Enter phone number"
+                />
+
                 <ApTextInput
                   label="Amount (₦)"
                   name="amount"
+                 readOnly={true}
                   placeHolder="e.g. 500"
                 />
 

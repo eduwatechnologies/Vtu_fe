@@ -7,6 +7,8 @@ import { Loader2, CheckCircle, XCircle, Clock } from "lucide-react";
 import Link from "next/link";
 import ApHomeHeader from "@/components/homeHeader";
 import ApLoader from "@/components/loader";
+import { EmptyTransaction } from "@/components/empty";
+
 
 export default function HistoryPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -92,7 +94,7 @@ export default function HistoryPage() {
           </div>
         ) : (
           !loading && (
-            <p className="text-center text-gray-500">No transactions found.</p>
+            <EmptyTransaction/>
           )
         )}
       </div>

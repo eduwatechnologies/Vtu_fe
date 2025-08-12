@@ -94,6 +94,8 @@ export const ApTextInput = forwardRef<
               {...(!ignoreFormik ? formikField[0] : {})}
               onChange={handleChange}
               maxLength={maxlength}
+            readOnly={readOnly}
+
             />
 
             {type === "password" && (
