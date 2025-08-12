@@ -32,8 +32,8 @@ type PurchaseAirtimePayload = {
 };
 
 type PurchaseAirtimeResponse = {
-  message: string;
-  error:string;
+  message?: string;
+  error?:string;
   transactionId: string;
 };
 
@@ -139,7 +139,7 @@ export const purchaseAirtime = createAsyncThunk<
       payload
     );
     return {
-      message: response.data.error,
+      message: response.data.message,
       transactionId: response.data.transactionId,
     };
   } catch (err: any) {
@@ -502,7 +502,7 @@ const dataPlansSlice = createSlice({
       })
       .addCase(purchaseAirtime.fulfilled, (state, action) => {
         state.purchaseLoading = false;
-        state.purchaseStatus = action.payload?.error;
+        state.purchaseStatus = action.payload?.message;
       })
       .addCase(purchaseAirtime.rejected, (state, action) => {
         state.purchaseLoading = false;
