@@ -5,8 +5,8 @@ import { useEffect, useRef } from "react";
 
 const IdleLogout = ({ children }: { children: React.ReactNode }) => {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // const logoutDelay = 10 * 60 * 1000; // 10 minutes
-  const logoutDelay = 10 * 1000; // 10 seconds
+  const logoutDelay = 10 * 60 * 1000; // 10 minutes
+  // const logoutDelay = 10 * 1000; // 10 seconds
 
   const router = useRouter();
 
