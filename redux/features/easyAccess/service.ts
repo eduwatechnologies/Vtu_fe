@@ -495,6 +495,21 @@ const dataPlansSlice = createSlice({
       })
 
 
+       .addCase(purchaseAirtime.pending, (state) => {
+        state.purchaseLoading = true;
+        state.purchaseStatus = null;
+        state.purchaseError = null;
+      })
+      .addCase(purchaseAirtime.fulfilled, (state, action) => {
+        state.purchaseLoading = false;
+        state.purchaseStatus = action.payload?.error;
+      })
+      .addCase(purchaseAirtime.rejected, (state, action) => {
+        state.purchaseLoading = false;
+        state.purchaseError = action.payload?.error;
+      })
+
+
       .addCase(getDataServices.fulfilled, (state, action) => {
         state.dataServices = action.payload;
       })
