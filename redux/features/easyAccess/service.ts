@@ -112,7 +112,6 @@ export const purchaseData = createAsyncThunk<
       payload
     );
 
-    // Ensure your backend returns the transaction ID (_id)
     return {
       message: response.data.message,
       transactionId: response.data.transactionId,
@@ -122,6 +121,7 @@ export const purchaseData = createAsyncThunk<
 
     return rejectWithValue({
       message: errorData?.message || "Purchase failed",
+      error:errorData.error,
       transactionId: errorData?.transactionId || "",
     });
   }
@@ -138,14 +138,14 @@ export const purchaseAirtime = createAsyncThunk<
       payload
     );
     return {
-      message: response.data.message,
+      message: response.data.error,
       transactionId: response.data.transactionId,
     };
   } catch (err: any) {
     const errorData = err?.response?.data;
 
     return rejectWithValue({
-      message: errorData?.message || "Purchase failed",
+      message: errorData?.error || "Purchase failed",
       transactionId: errorData?.transactionId || "",
     });
   }
@@ -489,8 +489,10 @@ const dataPlansSlice = createSlice({
       })
       .addCase(purchaseData.rejected, (state, action) => {
         state.purchaseLoading = false;
-        state.purchaseError = action.payload?.message as any;
+        state.purchaseError = action.payload?.error;
       })
+
+
       .addCase(getDataServices.fulfilled, (state, action) => {
         state.dataServices = action.payload;
       })
