@@ -22,7 +22,10 @@ if (typeof window !== "undefined") {
   axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-      // Handle errors
+        if (error.response?.status === 401 && error.response?.data?.msg === "Token expired") {
+      localStorage.removeItem("userToken");
+      window.location.href = "/login"; // or router navigation
+    }
       return Promise.reject(error);
     }
   );

@@ -36,6 +36,9 @@ export default function EasyAccessBuyData() {
     (state: RootState) => state.easyAccessdataPlans.dataServices
   );
 
+  const purchaseError = useSelector((state:RootState)=>state.easyAccessdataPlans.purchaseError);
+
+
   React.useEffect(() => {
     dispatch(getDataServices("data"));
   }, [dispatch]);
@@ -159,7 +162,7 @@ export default function EasyAccessBuyData() {
         const { transactionId } = resultAction.payload;
         router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
-        const errorPayload = resultAction.payload; // May be undefined
+        const errorPayload = resultAction.payload;
         const fallbackMessage =
           resultAction.error?.message || "Purchase failed!";
 
