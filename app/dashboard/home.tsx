@@ -198,7 +198,7 @@ export const HomeDashboard = () => {
         ) : transactions.length > 0 ? (
           <>
             <ul className="space-y-4">
-              {transactions.slice(-2).map((tx: any, index: number) => (
+              {transactions.slice(-2).reverse().map((tx: any, index: number) => (
                 <li key={index} className="flex justify-between items-center">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">

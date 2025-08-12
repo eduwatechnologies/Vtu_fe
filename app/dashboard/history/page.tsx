@@ -20,6 +20,7 @@ export default function HistoryPage() {
     dispatch(fetchUserTransactions());
   }, [dispatch]);
 
+  const reversedTransactions = transactions?.slice().reverse();
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "success":
@@ -50,9 +51,9 @@ export default function HistoryPage() {
     <div>
       <ApHomeHeader />
       <div className="min-h-screen bg-gray-100 ">
-        {transactions?.length > 0 ? (
+        {reversedTransactions?.length > 0 ? (
           <div className="grid  gap-4 mb-20">
-            {transactions.map((trans: any) => {
+            {reversedTransactions.map((trans: any) => {
               const status = trans?.status || "Pending";
               return (
                 <Link
