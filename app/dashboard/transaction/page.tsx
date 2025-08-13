@@ -41,14 +41,7 @@ function TransactionContent() {
               title="Transaction Type:"
               name={transaction.transaction_type || "N/A"}
             />
-            <RenderTrans
-              title="Previous Balance:"
-              name={transaction.previous_balance?.toString() || "N/A"}
-            />
-            <RenderTrans
-              title="New Balance:"
-              name={transaction.new_balance?.toString() || "N/A"}
-            />
+
             {/* <RenderTrans title="Note:" name={transaction.note || "N/A"} /> */}
           </>
         );
@@ -198,6 +191,15 @@ function TransactionContent() {
 
             {/* Service Specific Fields */}
             {renderServiceFields()}
+
+            <RenderTrans
+              title="Previous Balance:"
+              name={`₦${transaction?.previous_balance ?? 0}`}
+            />
+            <RenderTrans
+              title="New Balance:"
+              name={`₦${transaction?.new_balance ?? 0}`}
+            />
           </div>
         </div>
       </div>
