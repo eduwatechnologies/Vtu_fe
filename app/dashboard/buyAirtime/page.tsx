@@ -109,9 +109,9 @@ export default function BuyAirtime() {
         toast.success("✅ Airtime purchase successful!");
         router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
-         toast.error(resultAction.payload?.error || "Purchase failed...!")
+        toast.error(resultAction.payload?.error || "Purchase failed...!");
 
-            const transactionId = resultAction.payload?.transactionId;
+        const transactionId = resultAction.payload?.transactionId;
         if (transactionId) {
           router.push(`/dashboard/transaction?request_id=${transactionId}`);
         }
@@ -259,7 +259,7 @@ export default function BuyAirtime() {
                 title={loading ? "Processing..." : "Submit"}
                 className="w-1/2 bg-blue-600 hover:bg-blue-700"
                 disabled={loading || pinCode.length !== 4}
-                onClick={() => formData && handleFormSubmit(formData)}
+                // onClick={() => formData && handleFormSubmit(formData)}
                 type="button"
               />
             </div>
