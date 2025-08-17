@@ -15,7 +15,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   accessToken: null,
-  refreshToken:null,
+  refreshToken: null,
   loading: false,
   error: null,
 };
@@ -26,8 +26,8 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
-      state.accessToken= null;
-      state.refreshToken=null;
+      state.accessToken = null;
+      state.refreshToken = null;
     },
   },
   extraReducers: (builder) => {

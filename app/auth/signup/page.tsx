@@ -37,7 +37,7 @@ export default function SignUp() {
     pinCode: Yup.string()
       .matches(/^\d{4}$/, "PIN code must be exactly 4 digits")
       .nullable()
-      .notRequired(),
+      .required("PIN code is required"),
   });
 
   // ✅ Form Submission Handler
@@ -72,10 +72,10 @@ export default function SignUp() {
             email: "",
             state: "",
             phone: "",
-            referralCode: "",
+            referralCode: "", // Optional PIN code field
             password: "",
             confirmPassword: "",
-            pinCode: "", // Optional PIN code field
+            pinCode: "",
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}

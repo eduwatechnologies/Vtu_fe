@@ -9,26 +9,10 @@ export const signUpUser = createAsyncThunk(
       const response = await axiosInstance.post("/auth/signup", userData);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.msg || "Sign up failed");
+      return rejectWithValue(error.response?.data?.error || "Sign up failed");
     }
   }
 );
-
-// export const loginUser = createAsyncThunk(
-//   "auth/loginUser",
-//   async (
-//     credentials: { email: string; password: string },
-//     { rejectWithValue }
-//   ) => {
-//     try {
-//       const response = await axiosInstance.post("/auth/login", credentials);
-//       localStorage.setItem("userToken", response?.data?.token);
-//       return response.data;
-//     } catch (error: any) {
-//       return rejectWithValue(error.response?.data?.msg || "Login failed");
-//     }
-//   }
-// );
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -38,16 +22,15 @@ export const loginUser = createAsyncThunk(
   ) => {
     try {
       const response = await axiosInstance.post("/auth/login", credentials);
-  localStorage.setItem("userToken", response?.data?.accessToken);
-  localStorage.setItem("refreshToken", response?.data?.refreshToken);
+      localStorage.setItem("userToken", response?.data?.accessToken);
+      localStorage.setItem("refreshToken", response?.data?.refreshToken);
 
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.msg || "Login failed");
+      return rejectWithValue(error.response?.data?.error || "Login failed");
     }
   }
 );
-
 
 export const verifyEmail = createAsyncThunk(
   "auth/verifyEmail",
