@@ -47,9 +47,9 @@ export const HomeDashboard = () => {
     dispatch(fetchUserTransactions());
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(getLatestNotification());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getLatestNotification());
+  // }, [dispatch]);
 
   const [showBalance, setShowBalance] = useState(true);
 

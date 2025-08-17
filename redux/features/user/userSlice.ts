@@ -6,14 +6,16 @@ import { User } from "./type";
 
 interface AuthState {
   user: User | null;
-  token: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
-  token: null,
+  accessToken: null,
+  refreshToken:null,
   loading: false,
   error: null,
 };
@@ -24,7 +26,8 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
-      state.token = null;
+      state.accessToken= null;
+      state.refreshToken=null;
     },
   },
   extraReducers: (builder) => {
@@ -35,7 +38,7 @@ const authSlice = createSlice({
       .addCase(signUpUser.fulfilled, (state, action: PayloadAction<any>) => {
         state.user = action.payload;
         state.loading = false;
-        state.token = action.payload.userToken;
+        // state.token = action.payload.userToken;
       })
       .addCase(signUpUser.rejected, (state, action) => {
         state.error = action.payload as string;
@@ -45,7 +48,8 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(loginUser.fulfilled, (state, action: PayloadAction<any>) => {
-        state.token = action.payload.token;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
         state.user = action.payload.user;
         state.loading = false;
       })
