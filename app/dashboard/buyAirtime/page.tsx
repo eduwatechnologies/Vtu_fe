@@ -17,10 +17,12 @@ import {
   purchaseAirtime,
 } from "@/redux/features/easyAccess/service";
 import GlobalModal from "@/components/modal/globalModal";
+import { detectNetwork } from "@/utils/networkChecker";
 
 interface FormValues {
   phone: string;
   amount: string;
+  network: string;
 }
 
 const validationSchema = Yup.object({
@@ -136,7 +138,7 @@ export default function BuyAirtime() {
           </p>
 
           <Formik
-            initialValues={{ phone: "", amount: "" }}
+            initialValues={{ phone: "", amount: "", network: "" }}
             validationSchema={validationSchema}
             onSubmit={() => {}} // Empty handler since we're using custom submission
           >
@@ -158,6 +160,10 @@ export default function BuyAirtime() {
                           .split(" ")[0]
                           .toLowerCase();
                         handleNetworkSelect(provider, setFieldValue, provider);
+                        setFieldValue(
+                          "network",
+                          service.name.split(" ")[0].toUpperCase()
+                        );
                       }}
                     >
                       <img
@@ -170,10 +176,47 @@ export default function BuyAirtime() {
                 </div>
 
                 <ApTextInput
-                  label="Phone Number"
-                  name="phone"
-                  placeHolder="Enter 11-digit phone number"
+                  label="Network"
+                  name="network"
+                  placeHolder="Select network"
+                  readOnly={true}
+                  value={values.network}
                 />
+
+                <ApTextInput
+                  label="Phone Number.."
+                  name="phone"
+                  type="text"
+                  placeHolder="Enter phone number"
+                  onChange={(value: string) => {
+                    setFieldValue("phone", value);
+
+                    if (value.length >= 4) {
+                      const detected = detectNetwork(value);
+                      if (detected) {
+                        if (
+                          values.network &&
+                          values.network !== detected.toUpperCase()
+                        ) {
+                          toast.warning(
+                            `Network changed automatically to ${detected.toUpperCase()} based on phone number`
+                          );
+                        }
+                        setSelectedNetwork(detected);
+                        setFieldValue("network", detected.toUpperCase());
+                      }
+                    }
+                  }}
+                />
+                {/* {values.phone.length === 11 &&
+                  values.network &&
+                  detectNetwork(values.phone) !== values.network && (
+                    <p className="text-red-500 text-sm mt-1">
+                      Phone number does not match selected network (
+                      {detectNetwork(values.phone)?.toUpperCase()} detected).
+                    </p>
+                  )} */}
+
                 <ApTextInput
                   label="Amount (₦)"
                   name="amount"
@@ -183,7 +226,13 @@ export default function BuyAirtime() {
                 <ApButton
                   type="button"
                   className="w-full mt-4"
-                  disabled={loading || !isValid || !dirty}
+                  disabled={
+                    loading ||
+                    !isValid ||
+                    !dirty ||
+                    detectNetwork(values.phone)?.toUpperCase() !==
+                      values.network
+                  }
                   onClick={() => {
                     setFormData(values);
                     setPinModalOpen(true);
