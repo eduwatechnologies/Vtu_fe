@@ -30,7 +30,7 @@ const validationSchema = Yup.object({
     .matches(/^[0-9]{11}$/, "Phone number must be 11 digits")
     .required("Phone number is required"),
   amount: Yup.number()
-    .min(50, "Minimum amount is ₦50")
+    .min(100, "Minimum amount is ₦100")
     .max(50000, "Maximum amount is ₦50,000")
     .required("Amount is required"),
 });
@@ -87,6 +87,7 @@ export default function BuyAirtime() {
     }
   };
 
+
   const handleFormSubmit = async (values: any) => {
     if (!pinCode || pinCode.length !== 4) {
       toast.error("Please enter a valid 4-digit PIN");
@@ -98,7 +99,7 @@ export default function BuyAirtime() {
       networkId: selectedNetwork,
       userId: user?._id,
       airtimetype: airtimetype,
-      amount: Number(values.amount),
+       amount: Number(formData?.finalAmount),
       pinCode,
     };
 
@@ -127,6 +128,7 @@ export default function BuyAirtime() {
     }
   };
 
+
   return (
     <div className="min-h-screen bg-white">
       <ApHeader title="Buy Airtime" />
@@ -142,7 +144,12 @@ export default function BuyAirtime() {
             validationSchema={validationSchema}
             onSubmit={() => {}} // Empty handler since we're using custom submission
           >
-            {({ values, setFieldValue, isValid, dirty }) => (
+            {({ values, setFieldValue, isValid, dirty }) => 
+            {
+                  const discount = 2;
+const finalAmount = Math.max(0, Number(values.amount) - discount);
+            
+            return(
               <Form>
                 {/* Network Logos */}
                 <div className="flex flex-wrap justify-center gap-4 mb-4">
@@ -208,20 +215,20 @@ export default function BuyAirtime() {
                     }
                   }}
                 />
-                {/* {values.phone.length === 11 &&
-                  values.network &&
-                  detectNetwork(values.phone) !== values.network && (
-                    <p className="text-red-500 text-sm mt-1">
-                      Phone number does not match selected network (
-                      {detectNetwork(values.phone)?.toUpperCase()} detected).
-                    </p>
-                  )} */}
-
+               
                 <ApTextInput
                   label="Amount (₦)"
                   name="amount"
-                  placeHolder="Enter amount between ₦50 - ₦50,000"
+                  placeHolder="Enter amount between ₦100 - ₦50,000"
                 />
+
+                
+       
+
+        {/* Show Final Amount */}
+        <div className="mt-1 text-md font-semibold">
+          Final Amount: ₦{finalAmount}
+        </div>
 
                 <ApButton
                   type="button"
@@ -234,7 +241,7 @@ export default function BuyAirtime() {
                       values.network
                   }
                   onClick={() => {
-                    setFormData(values);
+                     setFormData({ ...values, finalAmount });
                     setPinModalOpen(true);
                   }}
                   title="Continue"
@@ -262,7 +269,7 @@ export default function BuyAirtime() {
                   </div>
                 </GlobalModal>
               </Form>
-            )}
+            )}}
           </Formik>
         </div>
       </div>
