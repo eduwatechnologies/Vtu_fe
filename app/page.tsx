@@ -10,13 +10,14 @@ import GoogleAd from "./googleads";
 export default function Home() {
   return (
     <HomeLayout>
-      <GoogleAd slot="5872708392333567" />
       <HeroSection />
       <StatsSection />
       <ServiceSection />
       <FaqSection />
+
       {/* <CtaSection /> */}
       <TestimonialsSection />
+      <GoogleAd slot="5872708392333567" />
     </HomeLayout>
   );
 }
