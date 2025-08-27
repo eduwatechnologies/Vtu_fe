@@ -87,7 +87,6 @@ export default function BuyAirtime() {
     }
   };
 
-
   const handleFormSubmit = async (values: any) => {
     if (!pinCode || pinCode.length !== 4) {
       toast.error("Please enter a valid 4-digit PIN");
@@ -99,7 +98,7 @@ export default function BuyAirtime() {
       networkId: selectedNetwork,
       userId: user?._id,
       airtimetype: airtimetype,
-       amount: Number(formData?.finalAmount),
+      amount: Number(values.amount),
       pinCode,
     };
 
@@ -128,7 +127,6 @@ export default function BuyAirtime() {
     }
   };
 
-
   return (
     <div className="min-h-screen bg-white">
       <ApHeader title="Buy Airtime" />
@@ -144,132 +142,133 @@ export default function BuyAirtime() {
             validationSchema={validationSchema}
             onSubmit={() => {}} // Empty handler since we're using custom submission
           >
-            {({ values, setFieldValue, isValid, dirty }) => 
-            {
-                  const discount = 2;
-const finalAmount = Math.max(0, Number(values.amount) - discount);
-            
-            return(
-              <Form>
-                {/* Network Logos */}
-                <div className="flex flex-wrap justify-center gap-4 mb-4">
-                  {dataServices.map((service: any) => (
-                    <button
-                      key={service._id}
-                      type="button"
-                      className={`flex items-center justify-center p-3 border-2 rounded-xl ${
-                        selectedNetwork === service.name
-                          ? "border-blue-500"
-                          : "border-gray-200"
-                      }`}
-                      onClick={() => {
-                        const provider = service.name
-                          .split(" ")[0]
-                          .toLowerCase();
-                        handleNetworkSelect(provider, setFieldValue, provider);
-                        setFieldValue(
-                          "network",
-                          service.name.split(" ")[0].toUpperCase()
-                        );
-                      }}
-                    >
-                      <img
-                        src={service.image}
-                        alt={service.name}
-                        className="w-10 h-10 object-contain"
-                      />
-                    </button>
-                  ))}
-                </div>
+            {({ values, setFieldValue, isValid, dirty }) => {
+              const discount = 2;
+              const finalAmount = Math.max(0, Number(values.amount) - discount);
 
-                <ApTextInput
-                  label="Network"
-                  name="network"
-                  placeHolder="Select network"
-                  readOnly={true}
-                  value={values.network}
-                />
-
-                <ApTextInput
-                  label="Phone Number.."
-                  name="phone"
-                  type="text"
-                  placeHolder="Enter phone number"
-                  onChange={(value: string) => {
-                    setFieldValue("phone", value);
-
-                    if (value.length >= 4) {
-                      const detected = detectNetwork(value);
-                      if (detected) {
-                        if (
-                          values.network &&
-                          values.network !== detected.toUpperCase()
-                        ) {
-                          toast.warning(
-                            `Network changed automatically to ${detected.toUpperCase()} based on phone number`
+              return (
+                <Form>
+                  {/* Network Logos */}
+                  <div className="flex flex-wrap justify-center gap-4 mb-4">
+                    {dataServices.map((service: any) => (
+                      <button
+                        key={service._id}
+                        type="button"
+                        className={`flex items-center justify-center p-3 border-2 rounded-xl ${
+                          selectedNetwork === service.name
+                            ? "border-blue-500"
+                            : "border-gray-200"
+                        }`}
+                        onClick={() => {
+                          const provider = service.name
+                            .split(" ")[0]
+                            .toLowerCase();
+                          handleNetworkSelect(
+                            provider,
+                            setFieldValue,
+                            provider
                           );
+                          setFieldValue(
+                            "network",
+                            service.name.split(" ")[0].toUpperCase()
+                          );
+                        }}
+                      >
+                        <img
+                          src={service.image}
+                          alt={service.name}
+                          className="w-10 h-10 object-contain"
+                        />
+                      </button>
+                    ))}
+                  </div>
+
+                  <ApTextInput
+                    label="Network"
+                    name="network"
+                    placeHolder="Select network"
+                    readOnly={true}
+                    value={values.network}
+                  />
+
+                  <ApTextInput
+                    label="Phone Number.."
+                    name="phone"
+                    type="text"
+                    placeHolder="Enter phone number"
+                    onChange={(value: string) => {
+                      setFieldValue("phone", value);
+
+                      if (value.length >= 4) {
+                        const detected = detectNetwork(value);
+                        if (detected) {
+                          if (
+                            values.network &&
+                            values.network !== detected.toUpperCase()
+                          ) {
+                            toast.warning(
+                              `Network changed automatically to ${detected.toUpperCase()} based on phone number`
+                            );
+                          }
+                          setSelectedNetwork(detected);
+                          setFieldValue("network", detected.toUpperCase());
                         }
-                        setSelectedNetwork(detected);
-                        setFieldValue("network", detected.toUpperCase());
                       }
+                    }}
+                  />
+
+                  <ApTextInput
+                    label="Amount (₦)"
+                    name="amount"
+                    placeHolder="Enter amount between ₦100 - ₦50,000"
+                  />
+
+                  {/* Show Final Amount */}
+                  <div className="mt-1 text-md font-semibold">
+                    Final Amount: ₦{finalAmount}
+                  </div>
+
+                  <ApButton
+                    type="button"
+                    className="w-full mt-4"
+                    disabled={
+                      loading ||
+                      !isValid ||
+                      !dirty ||
+                      detectNetwork(values.phone)?.toUpperCase() !==
+                        values.network
                     }
-                  }}
-                />
-               
-                <ApTextInput
-                  label="Amount (₦)"
-                  name="amount"
-                  placeHolder="Enter amount between ₦100 - ₦50,000"
-                />
+                    onClick={() => {
+                      setFormData({ ...values });
+                      setPinModalOpen(true);
+                    }}
+                    title="Continue"
+                  />
 
-                
-       
-
-        {/* Show Final Amount */}
-        <div className="mt-1 text-md font-semibold">
-          Final Amount: ₦{finalAmount}
-        </div>
-
-                <ApButton
-                  type="button"
-                  className="w-full mt-4"
-                  disabled={
-                    loading ||
-                    !isValid ||
-                    !dirty ||
-                    detectNetwork(values.phone)?.toUpperCase() !==
-                      values.network
-                  }
-                  onClick={() => {
-                     setFormData({ ...values, finalAmount });
-                    setPinModalOpen(true);
-                  }}
-                  title="Continue"
-                />
-
-                <GlobalModal
-                  title={`Choose Plan (${selectedNetwork})`}
-                  isOpen={isModalOpen}
-                  onClose={() => setIsModalOpen(false)}
-                >
-                  <div className="max-h-[60vh] overflow-y-auto">
-                    <div>
-                      <div className="space-y-2">
-                        {categories.map((c, i) => (
-                          <button
-                            key={i}
-                            onClick={() => handleSetAirtimeType(c)}
-                            className="w-full px-4 py-3 bg-gray-100 rounded-lg hover:bg-blue-50"
-                          >
-                            {c}
-                          </button>
-                        ))}
+                  <GlobalModal
+                    title={`Choose Plan (${selectedNetwork})`}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                  >
+                    <div className="max-h-[60vh] overflow-y-auto">
+                      <div>
+                        <div className="space-y-2">
+                          {categories.map((c, i) => (
+                            <button
+                              key={i}
+                              onClick={() => handleSetAirtimeType(c)}
+                              className="w-full px-4 py-3 bg-gray-100 rounded-lg hover:bg-blue-50"
+                            >
+                              {c}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </GlobalModal>
-              </Form>
-            )}}
+                  </GlobalModal>
+                </Form>
+              );
+            }}
           </Formik>
         </div>
       </div>

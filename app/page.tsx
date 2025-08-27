@@ -5,14 +5,16 @@ import { TestimonialsSection } from "./home/testimonalSection";
 import HomeLayout from "./homeLayout";
 import { StatsSection } from "./home/statsSection";
 import { FaqSection } from "./home/faqSection";
+import GoogleAd from "./googleads";
 
 export default function Home() {
   return (
     <HomeLayout>
+      <GoogleAd slot="5872708392333567" />
       <HeroSection />
-      <StatsSection/>
+      <StatsSection />
       <ServiceSection />
-      <FaqSection/>
+      <FaqSection />
       {/* <CtaSection /> */}
       <TestimonialsSection />
     </HomeLayout>

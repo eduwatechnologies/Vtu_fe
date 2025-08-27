@@ -9,7 +9,7 @@ export default function Profile() {
   const { user } = useSelector((state: RootState) => state.auth);
 
   const [referralCode] = useState(user?.referralCode || "YOUR_REFERRAL_CODE");
-  const referralLink = `https://www.almaleek.com.ng/register?ref=${referralCode}`;
+  const referralLink = `https://www.almaleek.com.ng/auth/signup?ref=${referralCode}`;
   const router = useRouter();
 
   const copyToClipboard = () => {
