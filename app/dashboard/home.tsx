@@ -87,7 +87,7 @@ export const HomeDashboard = () => {
           <h2 className="text-base font-medium opacity-90">Wallet Balance</h2>
           <button
             onClick={toggleBalance}
-            className="p-1 rounded-full transition bg-white/20 hover:bg-white/30 supports-[backdrop-filter]:bg-white/10 supports-[backdrop-filter]:backdrop-blur-md"
+            className="p-1 rounded-full transition glass-card"
           >
             {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -102,18 +102,18 @@ export const HomeDashboard = () => {
 
         {/* Bonus / Claim section */}
         <div className="grid grid-cols-2 gap-3 mt-6 text-sm">
-          <div className="px-4 py-2 rounded-lg flex items-center gap-2 bg-green-700/30 supports-[backdrop-filter]:bg-white/10 supports-[backdrop-filter]:backdrop-blur-md">
+          <div className="glass-card px-4 py-2 flex items-center gap-2">
             <TrendingUp size={14} />
             <span>Bonus: ₦{user?.bonus ?? "0.00"}</span>
           </div>
-          <div className="px-4 py-2 rounded-lg flex items-center gap-2 bg-green-700/30 supports-[backdrop-filter]:bg-white/10 supports-[backdrop-filter]:backdrop-blur-md">
+          <div className="glass-card px-4 py-2 flex items-center gap-2">
             <TrendingUp size={14} />
             <span>Claim: ₦0.00</span>
           </div>
         </div>
 
         {/* PalmPay account details */}
-        <div className="mt-4 p-3 rounded-lg text-sm bg-green-700/30 supports-[backdrop-filter]:bg-white/10 supports-[backdrop-filter]:backdrop-blur-md">
+        <div className="mt-4 glass-card p-3 text-sm">
           <p className="font-semibold">{user?.account?.bankName as any}</p>
           <div className="flex justify-between items-center">
             <p className="mt-1 opacity-90">

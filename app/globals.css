@@ -18,36 +18,43 @@ body {
   }
 }
 
+/* Gradient bg */
 .bg_custom {
   background-image: linear-gradient(to right, #16a34a, #166534);
 }
 
-/* Custom Scrollbar for Webkit Browsers */
+/* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  height: 8px; /* Horizontal scrollbar height */
-  width: 4px; /* Vertical scrollbar width */
+  width: 8px;
+  height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #4a90e2; /* Scrollbar color */
+  background-color: #4a90e2;
   border-radius: 10px;
-  border: 2px solid #fff; /* Adding a border to the thumb */
+  border: 2px solid #fff;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background-color: #f1f1f1; /* Track color */
+  background-color: #f1f1f1;
   border-radius: 10px;
-  width: 4px; /* Track width */
 }
 
-/* For Firefox, we can style the scrollbar using scrollbars */
 .custom-scrollbar {
-  scrollbar-width: 10px; /* Scrollbar width */
-  scrollbar-color: #4a90e2 #f1f1f1; /* Thumb color and track color for Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #4a90e2 #f1f1f1;
 }
 
-.backdrop-fix {
+/* Glass effect - cross-platform */
+.glass-card {
+  @apply rounded-lg text-white;
+  background-color: rgba(22, 101, 52, 0.3); /* fallback */
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@supports (backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px)) {
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md;
+  }
 }
