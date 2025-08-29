@@ -143,7 +143,9 @@ export default function BuyAirtime() {
             onSubmit={() => {}} // Empty handler since we're using custom submission
           >
             {({ values, setFieldValue, isValid, dirty }) => {
-              const discount = 2;
+              const discountPercentage = 2; // 2% discount
+              const discount =
+                (Number(values.amount) * discountPercentage) / 100;
               const finalAmount = Math.max(0, Number(values.amount) - discount);
 
               return (

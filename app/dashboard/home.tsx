@@ -80,7 +80,15 @@ export const HomeDashboard = () => {
     <div className=" ">
       <ApHomeHeader />
 
-      <div className="bg-gradient-to-br from-green-600 to-green-800 text-white rounded-2xl p-6 shadow-lg ring-1 ring-white/10 mb-6 transition-transform hover:scale-[1.01]">
+      <div
+        className="  bg-gradient-to-br from-green-600 to-green-800 text-white 
+    rounded-2xl p-6 shadow-lg 
+    ring-1 ring-white/10 mb-6 
+    transform-gpu transition-transform duration-200 ease-out 
+    hover:scale-[1.01] 
+    will-change-transform
+    [background:linear-gradient(135deg,#16a34a,#166534)]"
+      >
         {/* Wallet balance header */}
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-base font-medium opacity-90">Wallet Balance</h2>
