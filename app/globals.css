@@ -46,4 +46,8 @@ body {
   scrollbar-color: #4a90e2 #f1f1f1; /* Thumb color and track color for Firefox */
 }
 
-
+.backdrop-fix {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.1);
+}

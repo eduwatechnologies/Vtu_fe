@@ -87,7 +87,7 @@ export const HomeDashboard = () => {
           <h2 className="text-base font-medium opacity-90">Wallet Balance</h2>
           <button
             onClick={toggleBalance}
-            className="p-1 bg-white/10 rounded-full hover:bg-white/20 transition"
+            className="p-1 rounded-full transition bg-white/20 hover:bg-white/30 supports-[backdrop-filter]:bg-white/10 supports-[backdrop-filter]:backdrop-blur-md"
           >
             {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -102,26 +102,25 @@ export const HomeDashboard = () => {
 
         {/* Bonus / Claim section */}
         <div className="grid grid-cols-2 gap-3 mt-6 text-sm">
-          <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
+          <div className="px-4 py-2 rounded-lg flex items-center gap-2 bg-green-700/30 supports-[backdrop-filter]:bg-white/10 supports-[backdrop-filter]:backdrop-blur-md">
             <TrendingUp size={14} />
             <span>Bonus: ₦{user?.bonus ?? "0.00"}</span>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
+          <div className="px-4 py-2 rounded-lg flex items-center gap-2 bg-green-700/30 supports-[backdrop-filter]:bg-white/10 supports-[backdrop-filter]:backdrop-blur-md">
             <TrendingUp size={14} />
             <span>Claim: ₦0.00</span>
           </div>
         </div>
+
         {/* PalmPay account details */}
-        <div className="mt-4 bg-white/10 backdrop-blur-sm rounded-lg p-3 text-sm">
+        <div className="mt-4 p-3 rounded-lg text-sm bg-green-700/30 supports-[backdrop-filter]:bg-white/10 supports-[backdrop-filter]:backdrop-blur-md">
           <p className="font-semibold">{user?.account?.bankName as any}</p>
           <div className="flex justify-between items-center">
             <p className="mt-1 opacity-90">
               <span className="font-medium">Acc No:</span>{" "}
               {user?.account?.accountNumber}
             </p>
-            <p className="opacity-90">
-              <span className="font-medium"></span> {user?.account?.accountName}
-            </p>
+            <p className="opacity-90">{user?.account?.accountName}</p>
           </div>
         </div>
       </div>
@@ -198,37 +197,42 @@ export const HomeDashboard = () => {
         ) : transactions.length > 0 ? (
           <>
             <ul className="space-y-4">
-              {transactions.slice(-2).reverse().map((tx: any, index: number) => (
-                <li key={index} className="flex justify-between items-center">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                      <span className="text-lg font-semibold text-gray-700">
-                        {getStatusIcon(tx?.status)}
-                      </span>
+              {transactions
+                .slice(-2)
+                .reverse()
+                .map((tx: any, index: number) => (
+                  <li key={index} className="flex justify-between items-center">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                        <span className="text-lg font-semibold text-gray-700">
+                          {getStatusIcon(tx?.status)}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">
+                          {tx?.product_name}
+                        </p>
+                        <p className="text-sm font-semibold">
+                          {tx?.service.charAt(0).toUpperCase() +
+                            tx?.service.slice(1).toLowerCase()}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(tx?.transaction_date).toLocaleString()}
+                        </p>
+                      </div>
                     </div>
                     <div>
-                      <p className="text-sm font-medium">{tx?.product_name}</p>
-                      <p className="text-sm font-semibold">
-                        {tx?.service.charAt(0).toUpperCase() +
-                          tx?.service.slice(1).toLowerCase()}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(tx?.transaction_date).toLocaleString()}
+                      <p className="text-right font-bold">₦{tx?.amount}</p>
+                      <p
+                        className={`px-3 py-1 rounded-full text-xs font-semibold text-right ${getStatusColor(
+                          tx?.status
+                        )}`}
+                      >
+                        {tx?.status}
                       </p>
                     </div>
-                  </div>
-                  <div>
-                    <p className="text-right font-bold">₦{tx?.amount}</p>
-                    <p
-                      className={`px-3 py-1 rounded-full text-xs font-semibold text-right ${getStatusColor(
-                        tx?.status
-                      )}`}
-                    >
-                      {tx?.status}
-                    </p>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                ))}
             </ul>
             <Link
               href="/dashboard/history"
