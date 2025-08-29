@@ -25,8 +25,7 @@ import ApHomeHeader from "../../components/homeHeader";
 import { useEffect, useState } from "react";
 import { fetchUserTransactions } from "@/redux/features/transaction/transactionSlice";
 import { NotificationModal } from "@/components/modal/notificationModal";
-import { addPin, currentUser } from "@/redux/features/user/userThunk";
-import { getLatestNotification } from "@/redux/features/notifications/notificationSlice";
+import { currentUser } from "@/redux/features/user/userThunk";
 
 export const HomeDashboard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -87,7 +86,7 @@ export const HomeDashboard = () => {
           <h2 className="text-base font-medium opacity-90">Wallet Balance</h2>
           <button
             onClick={toggleBalance}
-            className="p-1 rounded-full transition glass-card"
+            className="p-1 glass-card-sm transition"
           >
             {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -115,12 +114,15 @@ export const HomeDashboard = () => {
         {/* PalmPay account details */}
         <div className="mt-4 glass-card p-3 text-sm">
           <p className="font-semibold">{user?.account?.bankName as any}</p>
-          <div className="flex justify-between items-center">
+          <div className=" items-center">
             <p className="mt-1 opacity-90">
-              <span className="font-medium">Acc No:</span>{" "}
+              <span className="font-bold">Acc No:</span>{" "}
               {user?.account?.accountNumber}
             </p>
-            <p className="opacity-90">{user?.account?.accountName}</p>
+            <p className="opacity-90">
+              <span className="font-bold">Acc Name:</span>{" "}
+              {user?.account?.accountName}
+            </p>
           </div>
         </div>
       </div>

@@ -45,16 +45,19 @@ body {
   scrollbar-color: #4a90e2 #f1f1f1;
 }
 
-/* Glass effect - cross-platform */
+/* Safari-safe glass cards */
 .glass-card {
-  @apply rounded-lg text-white;
-  background-color: rgba(22, 101, 52, 0.3); /* fallback */
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background-color: rgba(22, 101, 52, 0.3); /* translucent green */
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-radius: 0.75rem; /* Tailwind rounded-lg */
+  color: white;
 }
 
-@supports (backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px)) {
-  .glass-card {
-    @apply bg-white/10 backdrop-blur-md;
-  }
+.glass-card-sm {
+  background-color: rgba(22, 101, 52, 0.3);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-radius: 0.5rem; /* Tailwind rounded-md */
+  color: white;
 }
