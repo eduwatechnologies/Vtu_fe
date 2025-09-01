@@ -17,7 +17,7 @@ export default function Home() {
 
       {/* <CtaSection /> */}
       <TestimonialsSection />
-      <GoogleAd slot="5872708392333567" />
+      {/* <GoogleAd slot="5872708392333567" /> */}
     </HomeLayout>
   );
 }

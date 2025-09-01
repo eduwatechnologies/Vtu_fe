@@ -68,7 +68,7 @@ function SignUp() {
           Create Account
         </h2>
         <p className="text-center text-sm text-gray-600 mb-6">
-          Join PayOnce today and start enjoying instant VTU recharges and
+          Join Almaleek today and start enjoying instant VTU recharges and
           seamless bill payments.
         </p>
 

@@ -54,11 +54,10 @@ export default function RootLayout({
       <head>
         {/* ✅ Google AdSense Script */}
         <Script
-          id="adsense-script"
           async
-          strategy="afterInteractive"
-          crossOrigin="anonymous"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5872708392333567"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
         />
       </head>
       <body
