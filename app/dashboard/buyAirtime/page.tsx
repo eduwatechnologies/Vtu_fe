@@ -198,25 +198,6 @@ export default function BuyAirtime() {
                     name="phone"
                     type="text"
                     placeHolder="Enter phone number"
-                    onChange={(value: string) => {
-                      setFieldValue("phone", value);
-
-                      if (value.length >= 4) {
-                        const detected = detectNetwork(value);
-                        if (detected) {
-                          if (
-                            values.network &&
-                            values.network !== detected.toUpperCase()
-                          ) {
-                            toast.warning(
-                              `Network changed automatically to ${detected.toUpperCase()} based on phone number`
-                            );
-                          }
-                          setSelectedNetwork(detected);
-                          setFieldValue("network", detected.toUpperCase());
-                        }
-                      }
-                    }}
                   />
 
                   <ApTextInput
@@ -233,13 +214,7 @@ export default function BuyAirtime() {
                   <ApButton
                     type="button"
                     className="w-full mt-4"
-                    disabled={
-                      loading ||
-                      !isValid ||
-                      !dirty ||
-                      detectNetwork(values.phone)?.toUpperCase() !==
-                        values.network
-                    }
+                    disabled={loading || !isValid || !dirty}
                     onClick={() => {
                       setFormData({ ...values });
                       setPinModalOpen(true);

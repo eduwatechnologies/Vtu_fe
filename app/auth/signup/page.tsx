@@ -11,11 +11,17 @@ import { useRouter } from "next/navigation";
 import logo from "@/public/images/logo.png";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export default function SignUp() {
   const dispatch = useDispatch<AppDispatch>();
   const { loading } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
+  // ✅ Grab referral code from query params
+  const searchParams = useSearchParams();
+
+  // ✅ Grab referral code from query params
+  const referralFromUrl = searchParams.get("ref") || "";
 
   const validationSchema = Yup.object({
     firstName: Yup.string().required("First name is required"),
@@ -72,7 +78,7 @@ export default function SignUp() {
             email: "",
             state: "",
             phone: "",
-            referralCode: "", // Optional PIN code field
+            referralCode: referralFromUrl || "",
             password: "",
             confirmPassword: "",
             pinCode: "",
