@@ -20,7 +20,7 @@ export default function DashboardLayout({
 
   return (
     <IdleLogout>
-      <div className="flex flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 w-full max-w-[420px] mx-auto shadow-lg border">
+      <div className="flex flex-col min-h-screen bg-gradient-to-br from-purple-50 to-purple-50 w-full max-w-[420px] mx-auto shadow-lg border">
         <main className="flex-1 p-6">{children}</main>
         <BottomNav />
       </div>

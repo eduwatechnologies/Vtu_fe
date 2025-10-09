@@ -17,6 +17,7 @@ import {
   Receipt,
   Download,
   Send,
+  Gift,
 } from "lucide-react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,6 +27,7 @@ import { useEffect, useState } from "react";
 import { fetchUserTransactions } from "@/redux/features/transaction/transactionSlice";
 import { NotificationModal } from "@/components/modal/notificationModal";
 import { currentUser } from "@/redux/features/user/userThunk";
+import TopSheetModal from "@/components/modal/topsheetModal";
 
 export const HomeDashboard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -33,6 +35,7 @@ export const HomeDashboard = () => {
     (state: RootState) => state.notifications
   );
   const dispatch = useDispatch<AppDispatch>();
+  const [isOpen, setIsOpen] = useState(false);
 
   const { transactions, loading } = useSelector(
     (state: RootState) => state.transactions
@@ -79,60 +82,69 @@ export const HomeDashboard = () => {
   return (
     <div className=" ">
       <ApHomeHeader />
-
       <div
-        className="  bg-gradient-to-br from-green-600 to-green-800 text-white 
-    rounded-2xl p-6 shadow-lg 
-    ring-1 ring-white/10 mb-6 
-    transform-gpu transition-transform duration-200 ease-out 
-    hover:scale-[1.01] 
-    will-change-transform
-    [background:linear-gradient(135deg,#16a34a,#166534)]"
+        className="
+    relative overflow-hidden rounded-2xl p-6 mb-6
+    text-white shadow-xl
+    bg-gradient-to-br from-purple-900 via-purple-800 to-purple-950
+    ring-1 ring-white/10
+    transition-transform duration-200 ease-out hover:scale-[1.02]
+  "
       >
-        {/* Wallet balance header */}
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-base font-medium opacity-90">Wallet Balance</h2>
+        {/* Soft glowing background */}
+        <div className="absolute inset-0 -z-10 opacity-40 bg-[radial-gradient(ellipse_at_top_right,rgba(192,132,252,0.25),transparent_60%)]" />
+
+        {/* Wallet header */}
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-sm font-semibold tracking-wide text-purple-300">
+            Wallet Balance
+          </h2>
           <button
             onClick={toggleBalance}
-            className="p-1 glass-card-sm transition"
+            className="p-1 rounded-lg hover:bg-white/10 transition"
           >
             {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         </div>
 
-        {/* Balance value */}
-        <p className="text-4xl font-extrabold tracking-wide mt-2">
+        {/* Balance display */}
+        <p className="text-5xl font-extrabold tracking-tight text-purple-300 drop-shadow-sm">
           {showBalance
             ? `₦${Number(user?.balance ?? 0).toLocaleString()}`
             : "••••••"}
         </p>
 
-        {/* Bonus / Claim section */}
+        {/* Bonus and claim */}
         <div className="grid grid-cols-2 gap-3 mt-6 text-sm">
-          <div className="glass-card px-4 py-2 flex items-center gap-2">
-            <TrendingUp size={14} />
+          <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
+            <TrendingUp size={14} className="text-emerald-400" />
             <span>Bonus: ₦{user?.bonus ?? "0.00"}</span>
           </div>
-          <div className="glass-card px-4 py-2 flex items-center gap-2">
-            <TrendingUp size={14} />
+          <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
+            <Gift size={14} className="text-pink-400" />
             <span>Claim: ₦0.00</span>
           </div>
         </div>
 
-        {/* PalmPay account details */}
-        <div className="mt-4 glass-card p-3 text-sm">
-          <p className="font-semibold">{user?.account?.bankName as any}</p>
-          <div className=" items-center">
-            <p className="mt-1 opacity-90">
-              <span className="font-bold">Acc No:</span>{" "}
+        {/* Account details */}
+        <div className="mt-5 bg-white/10 rounded-lg p-3 backdrop-blur-md text-sm">
+          <p className="font-semibold text-purple-300">
+            {user?.account?.bankName}
+          </p>
+          <div className="mt-1 space-y-1 opacity-90">
+            <p>
+              <span className="font-bold text-white">Acc No:</span>{" "}
               {user?.account?.accountNumber}
             </p>
-            <p className="opacity-90">
-              <span className="font-bold">Acc Name:</span>{" "}
+            <p>
+              <span className="font-bold text-white">Acc Name:</span>{" "}
               {user?.account?.accountName}
             </p>
           </div>
         </div>
+
+        {/* Optional pulse glow */}
+        <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.15),transparent_70%)] animate-pulse opacity-20" />
       </div>
 
       {/* Quick Actions */}
@@ -140,51 +152,33 @@ export const HomeDashboard = () => {
         {[
           {
             id: 1,
-            icon: <Send size={24} className="text-blue-500" />,
-            label: "Send",
-            link: "/dashboard/sendMoney",
-          },
-          {
-            id: 2,
-            icon: <Download size={24} className="text-green-500" />,
-            label: "Receive",
-            link: "/dashboard/sendMoney",
-          },
-          {
-            id: 3,
             icon: <Phone size={24} className="text-blue-500" />,
             label: "Airtime",
             link: "/dashboard/buyAirtime",
           },
           {
-            id: 4,
+            id: 2,
             icon: <Wifi size={24} className="text-green-500" />,
             label: "Data",
             link: "/dashboard/buyData",
           },
           {
-            id: 5,
+            id: 3,
             icon: <Bolt size={24} className="text-yellow-500" />,
             label: "Electricity",
             link: "/dashboard/buyElectricity",
           },
-
           {
-            id: 6,
-            icon: <GraduationCap size={24} color="blue" />,
-            label: "Exam",
-            link: "/dashboard/buyExam",
-          },
-          {
-            id: 7,
-            icon: <Tv2 size={24} color="red" />,
-            label: "TV",
-            link: "/dashboard/buyCableTv",
+            id: 4,
+            icon: <Grid size={24} className="text-gray-600" />,
+            label: "More",
+            action: () => setIsOpen(true),
           },
         ].map((action) => (
           <Link
             key={action.id}
-            href={action.link}
+            href={action.action ? "#" : action.link}
+            onClick={action.action}
             className="flex flex-col items-center justify-center bg-white p-4 rounded-lg shadow-md hover:bg-gray-200 transition duration-200"
           >
             {action.icon}
@@ -197,9 +191,17 @@ export const HomeDashboard = () => {
 
       {/* Recent Transactions */}
       <div className="bg-white shadow-md rounded-lg p-6 mb-10">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">
-          Transactions
-        </h2>
+        <div className="flex justify-between items-center mb-4 ">
+          <h2 className="text-md font-semibold text-gray-700 ">Transactions</h2>
+
+          <Link
+            href="/dashboard/history"
+            className="text-xs text-white block bg-purple-600 p-1 rounded-lg text-center "
+          >
+            See all
+          </Link>
+        </div>
+
         {loading ? (
           <div className="flex justify-center items-center">
             <Loader2 className="animate-spin text-gray-500 w-6 h-6" />
@@ -244,12 +246,6 @@ export const HomeDashboard = () => {
                   </li>
                 ))}
             </ul>
-            <Link
-              href="/dashboard/history"
-              className="text-sm text-blue-600 mt-1 block text-center"
-            >
-              See all
-            </Link>
           </>
         ) : (
           <div className="text-center py-2">
@@ -265,6 +261,38 @@ export const HomeDashboard = () => {
           </div>
         )}
       </div>
+
+      <TopSheetModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="More"
+      >
+        <div className="grid grid-cols-4 gap-4">
+          {[
+            {
+              id: 1,
+              icon: <GraduationCap size={24} />,
+              label: "Exam",
+              link: "/dashboard/buyExam",
+            },
+            {
+              id: 2,
+              icon: <Tv2 size={24} />,
+              label: "TV",
+              link: "/dashboard/buyCableTv",
+            },
+          ].map((item) => (
+            <Link
+              key={item.id}
+              href={item?.link}
+              className="flex flex-col items-center"
+            >
+              {item.icon}
+              <span className="text-sm">{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </TopSheetModal>
 
       <NotificationModal notification={notification} />
     </div>

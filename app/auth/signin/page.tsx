@@ -87,7 +87,7 @@ export default function SignIn() {
           </Link>
         </p>
 
-        <p className="text-center mt-6 text-sm text-green-600">
+        <p className="text-center mt-6 text-sm text-purple-600">
           Want to explore more?{" "}
           <Link
             href="/"
