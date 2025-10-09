@@ -15,8 +15,6 @@ import {
   Eye,
   EyeOff,
   Receipt,
-  Download,
-  Send,
   Gift,
 } from "lucide-react";
 import Link from "next/link";
@@ -28,6 +26,7 @@ import { fetchUserTransactions } from "@/redux/features/transaction/transactionS
 import { NotificationModal } from "@/components/modal/notificationModal";
 import { currentUser } from "@/redux/features/user/userThunk";
 import TopSheetModal from "@/components/modal/topsheetModal";
+import { getLatestNotification } from "@/redux/features/notifications/notificationSlice";
 
 export const HomeDashboard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -41,21 +40,14 @@ export const HomeDashboard = () => {
     (state: RootState) => state.transactions
   );
 
+  const [showBalance, setShowBalance] = useState(true);
+  const toggleBalance = () => setShowBalance((prev) => !prev);
+
   useEffect(() => {
     dispatch(currentUser());
-  }, []);
-
-  useEffect(() => {
+    dispatch(getLatestNotification());
     dispatch(fetchUserTransactions());
-  }, [dispatch]);
-
-  // useEffect(() => {
-  //   dispatch(getLatestNotification());
-  // }, [dispatch]);
-
-  const [showBalance, setShowBalance] = useState(true);
-
-  const toggleBalance = () => setShowBalance((prev) => !prev);
+  }, []);
 
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
