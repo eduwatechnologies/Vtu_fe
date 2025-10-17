@@ -15,6 +15,7 @@ const networkPrefixes: Record<string, string[]> = {
     "0906",
     "0913",
     "0916",
+    "0916",
   ],
   glo: ["0805", "0807", "0705", "0811", "0815", "0905"],
   airtel: [
@@ -41,4 +42,4 @@ export function detectNetwork(phone: string): string | null {
   }
 
   return null;
-}
+};
