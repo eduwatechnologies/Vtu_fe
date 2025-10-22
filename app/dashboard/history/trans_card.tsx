@@ -7,14 +7,14 @@ import {
   ArrowDownRight,
 } from "lucide-react";
 
-const getStatusColor = (status: string) => {
+const getStatusStyle = (status: string) => {
   switch (status?.toLowerCase()) {
     case "success":
-      return "text-green-500 bg-green-100";
+      return "bg-emerald-100/10 text-emerald-400 border border-emerald-400/20";
     case "failed":
-      return "text-red-500 bg-red-100";
+      return "bg-rose-100/10 text-rose-400 border border-rose-400/20";
     default:
-      return "text-yellow-500 bg-yellow-100";
+      return "bg-yellow-100/10 text-yellow-400 border border-yellow-400/20";
   }
 };
 
@@ -37,63 +37,86 @@ export default function TransactionCard({ trans }: { trans: any }) {
   return (
     <Link
       href={`/dashboard/transaction?request_id=${trans?._id}`}
-      className="bg-white shadow-sm hover:shadow-lg rounded-lg p-4 border border-gray-200 transition-transform duration-200 hover:scale-[1.01]"
+      className="
+        relative overflow-hidden rounded-2xl p-5 mb-4
+        bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900
+        text-white shadow-md
+        border border-slate-700/60 hover:border-purple-500/40
+        transition-all duration-300 hover:scale-[1.01]
+      "
     >
-      {/* Top Row: Status + Date */}
-      <div className="flex justify-between items-center mb-2">
+      {/* Accent Glow */}
+      <div className="absolute inset-0 -z-10 opacity-30 bg-[radial-gradient(ellipse_at_top_left,rgba(168,85,247,0.25),transparent_60%)]" />
+
+      {/* 1️⃣ Service + Date */}
+      <div className="flex justify-between items-center mb-4">
+        <p className="font-semibold text-sm text-gray-100">
+          {trans?.service || "Unknown Service"}
+        </p>
+        <p className="text-[11px] text-gray-400">
+          {new Date(trans?.createdAt).toLocaleDateString("en-GB")}
+        </p>
+      </div>
+
+      {/* 2️⃣ Amount + Type */}
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center gap-2 text-2xl font-bold">
+          {isCredit ? (
+            <ArrowDownRight className="w-5 h-5 text-emerald-400" />
+          ) : (
+            <ArrowUpRight className="w-5 h-5 text-rose-400" />
+          )}
+          <span>{`₦${Number(trans?.amount ?? 0).toLocaleString()}`}</span>
+        </div>
+
         <div
-          className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${
+            isCredit
+              ? "bg-emerald-400/10 text-emerald-400 border border-emerald-400/20"
+              : "bg-rose-400/10 text-rose-400 border border-rose-400/20"
+          }`}
+        >
+          {isCredit ? "Credit" : "Debit"}
+        </div>
+      </div>
+
+      {/* 3️⃣ Status + Reference */}
+      <div className="flex justify-between items-center mb-3">
+        <div
+          className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
             status
           )}`}
         >
           {getStatusIcon(status)}
           <span className="capitalize">{status}</span>
         </div>
-        <p className="text-gray-500 text-xs">
-          {new Date(trans?.createdAt).toLocaleDateString()}
+        <p className="truncate text-[11px] text-gray-400">
+          Ref: {trans?.reference_no || "N/A"}
         </p>
       </div>
 
-      {/* Amount */}
-      <div className="flex items-center gap-2 text-lg font-bold text-gray-900">
-        {isCredit ? (
-          <ArrowDownRight className="w-5 h-5 text-green-500" />
-        ) : (
-          <ArrowUpRight className="w-5 h-5 text-red-500" />
-        )}
-        ₦{Number(trans?.amount ?? 0).toLocaleString()}
-      </div>
+      {/* Divider */}
+      <div className="my-3 h-px bg-gradient-to-r from-transparent via-slate-600/50 to-transparent" />
 
-      {/* Balances */}
-      <div className="grid grid-cols-2 gap-2 text-sm mt-3">
-        <div className="bg-gray-50 p-2 rounded-md">
-          <span className="block text-gray-500 text-xs">Previous Balance</span>
-          <span className="font-semibold text-gray-900">
+      {/* 4️⃣ Balances + Note */}
+      <div className="flex justify-between text-sm text-gray-400 mb-2">
+        <div>
+          <p className="text-[11px]">Prev Balance</p>
+          <p className="text-white font-semibold">
             ₦{Number(trans?.previous_balance ?? 0).toLocaleString()}
-          </span>
+          </p>
         </div>
-        <div className="bg-gray-50 p-2 rounded-md">
-          <span className="block text-gray-500 text-xs">New Balance</span>
-          <span className="font-semibold text-gray-900">
+        <div className="text-right">
+          <p className="text-[11px]">New Balance</p>
+          <p className="text-white font-semibold">
             ₦{Number(trans?.new_balance ?? 0).toLocaleString()}
-          </span>
+          </p>
         </div>
       </div>
 
-      {/* Details */}
-      <div className="mt-3 text-sm text-gray-600">
-        <p>
-          <span className="font-medium">Service:</span>{" "}
-          {trans?.service || "N/A"}
-        </p>
-        <p className="truncate">
-          <span className="font-medium">Reference:</span>{" "}
-          {trans?.reference_no || "N/A"}
-        </p>
-        {trans?.note && (
-          <p className="text-gray-500 text-xs mt-1">{trans?.note}</p>
-        )}
-      </div>
+      {trans?.note && (
+        <p className="text-gray-500 text-[11px] mt-2 italic">“{trans?.note}”</p>
+      )}
     </Link>
   );
 }

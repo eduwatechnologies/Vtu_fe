@@ -91,17 +91,10 @@ function TransactionContent() {
         return (
           <>
             <RenderTrans
-              title="WAEC PIN:"
+              title="Pin:"
               name={transaction.waec_pin || "N/A"}
             />
-            <RenderTrans
-              title="NECO Token:"
-              name={transaction.neco_token || "N/A"}
-            />
-            <RenderTrans
-              title="NABTEB PIN:"
-              name={transaction.nabteb_pin || "N/A"}
-            />
+           
           </>
         );
 
