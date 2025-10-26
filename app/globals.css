@@ -61,3 +61,7 @@ body {
   border-radius: 0.5rem; /* Tailwind rounded-md */
   color: white;
 }
+
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+

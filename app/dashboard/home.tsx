@@ -72,72 +72,75 @@ export const HomeDashboard = () => {
   };
 
   return (
-    <div className=" ">
+    <div >
       <ApHomeHeader />
-      <div
-        className="
+  <div
+  className="
     relative overflow-hidden rounded-2xl p-6 mb-6
     text-white shadow-xl
+    bg-purple-900
     bg-gradient-to-br from-purple-900 via-purple-800 to-purple-950
     ring-1 ring-white/10
-    transition-transform duration-200 ease-out hover:scale-[1.02]
-  "
-      >
-        {/* Soft glowing background */}
-        <div className="absolute inset-0 -z-10 opacity-40 bg-[radial-gradient(ellipse_at_top_right,rgba(192,132,252,0.25),transparent_60%)]" />
+    transition-transform duration-200 ease-out hover:scale-[1.02]"
+>
+  {/* Soft glowing background (Safari-friendly) */}
+  <div className="absolute inset-0 -z-10">
+    {/* Base gradient layer */}
+    <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-950 opacity-90" />
+    {/* Glow effect */}
+    <div className="absolute w-2/3 h-2/3 bg-purple-500/20 blur-3xl top-0 right-0 rounded-full" />
+  </div>
 
-        {/* Wallet header */}
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-sm font-semibold tracking-wide text-purple-300">
-            Wallet Balance
-          </h2>
-          <button
-            onClick={toggleBalance}
-            className="p-1 rounded-lg hover:bg-white/10 transition"
-          >
-            {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-        </div>
+  {/* Wallet header */}
+  <div className="flex justify-between items-center mb-3">
+    <h2 className="text-sm font-semibold tracking-wide text-purple-300">
+      Wallet Balance
+    </h2>
+    <button
+      onClick={toggleBalance}
+      className="p-1 rounded-lg hover:bg-white/10 transition"
+    >
+      {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
 
-        {/* Balance display */}
-        <p className="text-5xl font-extrabold tracking-tight text-purple-300 drop-shadow-sm">
-          {showBalance
-            ? `₦${Number(user?.balance ?? 0).toLocaleString()}`
-            : "••••••"}
-        </p>
+  {/* Balance display */}
+  <p className="text-5xl font-extrabold tracking-tight text-purple-300 drop-shadow-sm">
+    {showBalance
+      ? `₦${Number(user?.balance ?? 0).toLocaleString()}`
+      : "••••••"}
+  </p>
 
-        {/* Bonus and claim */}
-        <div className="grid grid-cols-2 gap-3 mt-6 text-sm">
-          <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
-            <TrendingUp size={14} className="text-emerald-400" />
-            <span>Bonus: ₦{user?.bonus ?? "0.00"}</span>
-          </div>
-          <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
-            <Gift size={14} className="text-pink-400" />
-            <span>Claim: ₦0.00</span>
-          </div>
-        </div>
+  {/* Bonus and claim */}
+  <div className="grid grid-cols-2 gap-3 mt-6 text-sm">
+    <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
+      <TrendingUp size={14} className="text-emerald-400" />
+      <span>Bonus: ₦{user?.bonus ?? "0.00"}</span>
+    </div>
+    <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
+      <Gift size={14} className="text-pink-400" />
+      <span>Claim: ₦0.00</span>
+    </div>
+  </div>
 
-        {/* Account details */}
-        <div className="mt-5 bg-white/10 rounded-lg p-3 backdrop-blur-md text-sm">
-          <p className="font-semibold text-purple-300">
-            {user?.account?.bankName}
-          </p>
-          <div className="mt-1 space-y-1 opacity-90">
-            <p>
-              <span className="font-bold text-white">Acc No:</span>{" "}
-              {user?.account?.accountNumber}
-            </p>
-            <p>
-              <span className="font-bold text-white">Acc Name:</span>{" "}
-              {user?.account?.accountName}
-            </p>
-          </div>
-        </div>
+  {/* Account details */}
+  <div className="mt-5 bg-white/10 rounded-lg p-3 backdrop-blur-md text-sm">
+    <p className="font-semibold text-purple-300">
+      {user?.account?.bankName}
+    </p>
+    <div className="mt-1 space-y-1 opacity-90">
+      <p>
+        <span className="font-bold text-white">Acc No:</span>{" "}
+        {user?.account?.accountNumber}
+      </p>
+      <p>
+        <span className="font-bold text-white">Acc Name:</span>{" "}
+        {user?.account?.accountName}
+      </p>
+    </div>
+  </div>
+</div>
 
-        {/* Optional pulse glow */}
-        <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.15),transparent_70%)] animate-pulse opacity-20" />
-      </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-4 gap-3 mb-6">
