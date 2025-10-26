@@ -16,6 +16,7 @@ import {
   EyeOff,
   Receipt,
   Gift,
+  Copy 
 } from "lucide-react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,6 +30,7 @@ import TopSheetModal from "@/components/modal/topsheetModal";
 import { getLatestNotification } from "@/redux/features/notifications/notificationSlice";
 
 export const HomeDashboard = () => {
+   const [copied, setCopied] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const { notification } = useSelector(
     (state: RootState) => state.notifications
@@ -48,6 +50,12 @@ export const HomeDashboard = () => {
     dispatch(getLatestNotification());
     dispatch(fetchUserTransactions());
   }, []);
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -124,21 +132,36 @@ export const HomeDashboard = () => {
   </div>
 
   {/* Account details */}
-  <div className="mt-5 bg-white/10 rounded-lg p-3 backdrop-blur-md text-sm">
-    <p className="font-semibold text-purple-300">
-      {user?.account?.bankName}
-    </p>
-    <div className="mt-1 space-y-1 opacity-90">
-      <p>
-        <span className="font-bold text-white">Acc No:</span>{" "}
-        {user?.account?.accountNumber}
+ <div className="mt-5 bg-white/10 rounded-lg p-3 backdrop-blur-md text-sm">
+      <p className="font-semibold text-purple-300">
+        {user?.account?.bankName}
       </p>
-      <p>
-        <span className="font-bold text-white">Acc Name:</span>{" "}
-        {user?.account?.accountName}
-      </p>
+
+      <div className="mt-1 space-y-1 opacity-90">
+        <div className="flex items-center justify-between">
+          <p>
+            <span className="font-bold text-white">Acc No:</span>{" "}
+            {user?.account?.accountNumber}
+          </p>
+
+          <button
+            onClick={() => handleCopy(user?.account?.accountNumber)}
+            className="text-purple-300 hover:text-purple-400"
+          >
+            <Copy size={16} />
+          </button>
+        </div>
+
+        <p>
+          <span className="font-bold text-white">Acc Name:</span>{" "}
+          {user?.account?.accountName}
+        </p>
+
+        {copied && (
+          <p className="text-xs text-green-400 mt-1">Copied ✅</p>
+        )}
+      </div>
     </div>
-  </div>
 </div>
 
 
