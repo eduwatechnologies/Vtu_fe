@@ -145,7 +145,7 @@ export const HomeDashboard = () => {
           </p>
 
           <button
-            onClick={() => handleCopy(user?.account?.accountNumber)}
+            onClick={() => handleCopy(user?.account?.accountNumber || "")}
             className="text-purple-300 hover:text-purple-400"
           >
             <Copy size={16} />
