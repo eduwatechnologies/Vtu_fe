@@ -36,8 +36,9 @@ export default function EasyAccessBuyData() {
     (state: RootState) => state.easyAccessdataPlans.dataServices
   );
 
-  const purchaseError = useSelector((state:RootState)=>state.easyAccessdataPlans.purchaseError);
-
+  const purchaseError = useSelector(
+    (state: RootState) => state.easyAccessdataPlans.purchaseError
+  );
 
   React.useEffect(() => {
     dispatch(getDataServices("data"));
@@ -161,8 +162,8 @@ export default function EasyAccessBuyData() {
         const { transactionId } = resultAction.payload;
         router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
-        console.log(resultAction.payload)
-         toast.error(resultAction.payload?.error || "Purchase failed...!")
+        console.log(resultAction.payload);
+        toast.error(resultAction.payload?.error || "Purchase failed...!");
         const transactionId = resultAction.payload?.transactionId;
         if (transactionId) {
           router.push(`/dashboard/transaction?request_id=${transactionId}`);
@@ -201,12 +202,15 @@ export default function EasyAccessBuyData() {
                     <button
                       key={service._id}
                       type="button"
-                      className={`flex items-center justify-center p-3 border-2 rounded-xl ${
-                        selectedNetwork === service.name
-                          ? "border-blue-500"
-                          : "border-gray-200"
-                      }`}
+                      disabled={!service.status} // disable click
+                      className={`flex items-center justify-center p-3 border-2 rounded-xl transition-all
+      ${
+        selectedNetwork === service.name ? "border-blue-500" : "border-gray-200"
+      }
+      ${!service.status ? "opacity-50 cursor-not-allowed" : ""}
+    `}
                       onClick={() => {
+                        if (!service.status) return; // prevent clicking
                         const provider = service.name
                           .split(" ")[0]
                           .toLowerCase();
@@ -237,7 +241,7 @@ export default function EasyAccessBuyData() {
                 <ApTextInput
                   label="Data Plan"
                   name="dataName"
-                 readOnly={true}
+                  readOnly={true}
                   type="text"
                   placeHolder="Enter phone number"
                 />
@@ -245,7 +249,7 @@ export default function EasyAccessBuyData() {
                 <ApTextInput
                   label="Amount (₦)"
                   name="amount"
-                 readOnly={true}
+                  readOnly={true}
                   placeHolder="e.g. 500"
                 />
 
