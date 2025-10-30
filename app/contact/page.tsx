@@ -13,7 +13,7 @@ export default function ContactPage() {
         <ul className="text-lg text-gray-700 space-y-2">
           <li>
             Email:{" "}
-            <a href="mailto:support@mypayonce.com" className="text-blue-600">
+            <a href="mailto:support@payonce.com" className="text-blue-600">
               support@payonce.com.ng
             </a>
           </li>
@@ -24,7 +24,7 @@ export default function ContactPage() {
               Chat with us
             </a>
           </li>
-          <li>Office: 123 PayOnce Lane, Lagos, Nigeria</li>
+          <li>Office: Ilorin, Kwara State, Nigeria</li>
         </ul>
       </main>
     </HomeLayout>
