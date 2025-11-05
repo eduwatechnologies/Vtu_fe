@@ -11,12 +11,9 @@ import { useRouter } from "next/navigation";
 import { ApButton } from "@/components/button/button";
 import ApHeader from "@/components/Apheader";
 import {
-  fetchDataCategories,
-  fetchDataPlans,
   getDataServices,
   purchaseAirtime,
 } from "@/redux/features/easyAccess/service";
-import GlobalModal from "@/components/modal/globalModal";
 import { detectNetwork } from "@/utils/networkChecker";
 
 interface FormValues {
@@ -40,52 +37,20 @@ export default function BuyAirtime() {
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [formData, setFormData] = useState<FormValues | null>(null);
   const [pinCode, setPinCode] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedNetwork, setSelectedNetwork] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
-  const [selectedNetwork, setSelectedNetwork] = useState<string>("");
 
-  // Select the list of data services from redux
+  // Fetch available airtime networks
   const dataServices = useSelector(
     (state: RootState) => state.easyAccessdataPlans.dataServices
   );
 
-  const [airtimetype, setAirtimeType] = useState<any>(null);
-
-  const handleSetAirtimeType = (type: any) => {
-    setAirtimeType(type);
-    setIsModalOpen(false);
-  };
-
   useEffect(() => {
     dispatch(getDataServices("airtime"));
   }, [dispatch]);
-
-  const handleNetworkSelect = async (
-    networkLabel: string,
-    setFieldValue: any,
-    networkValue: string
-  ) => {
-    setSelectedNetwork(networkLabel);
-    setIsModalOpen(true);
-
-    try {
-      const result = await dispatch(
-        fetchDataCategories({ network: networkLabel, serviceType: "airtime" })
-      );
-      if (fetchDataCategories.fulfilled.match(result)) {
-        setCategories(result.payload || []);
-      } else {
-        toast.error("Could not load categories");
-      }
-    } catch {
-      toast.error("Failed to load categories");
-    }
-  };
 
   const handleFormSubmit = async (values: any) => {
     if (!pinCode || pinCode.length !== 4) {
@@ -97,7 +62,6 @@ export default function BuyAirtime() {
       ...values,
       networkId: selectedNetwork,
       userId: user?._id,
-      airtimetype: airtimetype,
       amount: Number(values.amount),
       pinCode,
     };
@@ -112,13 +76,12 @@ export default function BuyAirtime() {
         router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
         toast.error(resultAction.payload?.error || "Purchase failed...!");
-
         const transactionId = resultAction.payload?.transactionId;
         if (transactionId) {
           router.push(`/dashboard/transaction?request_id=${transactionId}`);
         }
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -130,8 +93,8 @@ export default function BuyAirtime() {
   return (
     <div className="min-h-screen bg-white">
       <ApHeader title="Buy Airtime" />
-      <div className="flex bg-gray-100 ">
-        <div className="bg-white p-6  w-full max-w-md">
+      <div className="flex bg-gray-100">
+        <div className="bg-white p-6 w-full max-w-md">
           <p className="text-sm text-gray-600 text-center py-2 mb-4">
             Select your network, enter your number and amount, and complete with
             your PIN.
@@ -140,10 +103,10 @@ export default function BuyAirtime() {
           <Formik
             initialValues={{ phone: "", amount: "", network: "" }}
             validationSchema={validationSchema}
-            onSubmit={() => {}} // Empty handler since we're using custom submission
+            onSubmit={() => {}}
           >
             {({ values, setFieldValue, isValid, dirty }) => {
-              const discountPercentage = 2; // 2% discount
+              const discountPercentage = 2;
               const discount =
                 (Number(values.amount) * discountPercentage) / 100;
               const finalAmount = Math.max(0, Number(values.amount) - discount);
@@ -165,11 +128,7 @@ export default function BuyAirtime() {
                           const provider = service.name
                             .split(" ")[0]
                             .toLowerCase();
-                          handleNetworkSelect(
-                            provider,
-                            setFieldValue,
-                            provider
-                          );
+                          setSelectedNetwork(provider);
                           setFieldValue(
                             "network",
                             service.name.split(" ")[0].toUpperCase()
@@ -194,10 +153,11 @@ export default function BuyAirtime() {
                   />
 
                   <ApTextInput
-                    label="Phone Number.."
+                    label="Phone Number"
                     name="phone"
                     type="text"
                     placeHolder="Enter phone number"
+                    onChange={(value: string) => setFieldValue("phone", value)}
                   />
 
                   <ApTextInput
@@ -206,7 +166,6 @@ export default function BuyAirtime() {
                     placeHolder="Enter amount between ₦100 - ₦50,000"
                   />
 
-                  {/* Show Final Amount */}
                   <div className="mt-1 text-md font-semibold">
                     Final Amount: ₦{finalAmount}
                   </div>
@@ -221,28 +180,6 @@ export default function BuyAirtime() {
                     }}
                     title="Continue"
                   />
-
-                  <GlobalModal
-                    title={`Choose Plan (${selectedNetwork})`}
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                  >
-                    <div className="max-h-[60vh] overflow-y-auto">
-                      <div>
-                        <div className="space-y-2">
-                          {categories.map((c, i) => (
-                            <button
-                              key={i}
-                              onClick={() => handleSetAirtimeType(c)}
-                              className="w-full px-4 py-3 bg-gray-100 rounded-lg hover:bg-blue-50"
-                            >
-                              {c}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </GlobalModal>
                 </Form>
               );
             }}
