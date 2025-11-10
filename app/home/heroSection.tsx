@@ -1,12 +1,10 @@
 import Link from "next/link";
-import Image from "next/image"
-import HeroImage from "@/public/images/heroImage.png"
+import Image from "next/image";
+import HeroImage from "@/public/images/heroImage.png";
 
 export function HeroSection() {
   return (
     <div className="bg-[#0C0B28] text-white px-6 md:px-20">
-      
-
       {/* Hero Section */}
       <div className="flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-20">
         <div className="max-w-lg">
