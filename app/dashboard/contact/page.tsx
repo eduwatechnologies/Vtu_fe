@@ -1,56 +1,85 @@
 import React from "react";
-import { Mail, Phone, Instagram, Twitter, Facebook } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  Instagram,
+  Twitter,
+  Facebook,
+  MessageCircle,
+} from "lucide-react";
 
 const ContactUs = () => {
   const contactItems = [
-    { icon: <Phone className="text-blue-600" size={20} />, text: "+234 806 324 9490" },
-    { icon: <Mail className="text-blue-600" size={20} />, text: "support@almaleek.com.ng" },
     {
-      icon: <Instagram className="text-pink-500" size={20} />,
-      text: "@almaleek.com.ng",
-      link: "https://instagram.com/payonce.com.ng",
+      icon: <Phone size={20} />,
+      text: "+234 806 324 9490",
+      bgColor: "bg-blue-100",
+      textColor: "text-blue-600",
     },
     {
-      icon: <Twitter className="text-blue-400" size={20} />,
-      text: "@almaleek.com.ng",
-      link: "https://twitter.com/yourpage",
+      icon: <Mail size={20} />,
+      text: "support@payonce.com.ng",
+      bgColor: "bg-blue-100",
+      textColor: "text-blue-600",
     },
     {
-      icon: <Facebook className="text-blue-700" size={20} />,
-      text: "YourPage",
-      link: "https://facebook.com/yourpage",
+      icon: <MessageCircle size={20} />,
+      text: "Join Our WhatsApp Group",
+      link: "https://chat.whatsapp.com/Eg7pNO61XSmDClQgMEsA3n",
+      bgColor: "bg-green-100",
+      textColor: "text-green-600",
     },
+    // {
+    //   icon: <Instagram size={20} />,
+    //   text: "@payonce.com.ng",
+    //   link: "https://instagram.com/payonce.com.ng",
+    //   bgColor: "bg-pink-100",
+    //   textColor: "text-pink-500",
+    // },
+    // {
+    //   icon: <Twitter size={20} />,
+    //   text: "@payonce.com.ng",
+    //   link: "https://twitter.com/yourpage",
+    //   bgColor: "bg-blue-50",
+    //   textColor: "text-blue-400",
+    // },
+    // {
+    //   icon: <Facebook size={20} />,
+    //   text: "YourPage",
+    //   link: "https://facebook.com/yourpage",
+    //   bgColor: "bg-blue-50",
+    //   textColor: "text-blue-700",
+    // },
   ];
 
   return (
-    <div className="max-w-lg mx-auto mt-12 p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-        Contact Us
-      </h2>
-      <p className="text-center text-gray-500 mb-8">
-        We’d love to hear from you! Reach us through any of the channels below.
-      </p>
+    <div className="max-w-lg mx-auto mt-16 p-8 bg-white rounded-3xl shadow-xl border border-gray-100">
+      <div className="text-center mb-8">
+        <h2 className="text-4xl font-extrabold text-gray-800 mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+          Contact Us
+        </h2>
+        <p className="text-gray-500">
+          Reach us through any of the channels below. We’d love to hear from
+          you!
+        </p>
+      </div>
 
-      <div className="flex flex-col gap-5 text-gray-700 text-base">
+      <div className="flex flex-col gap-5">
         {contactItems.map((item, idx) => (
-          <div
+          <a
             key={idx}
-            className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-all duration-200"
+            href={item.link || "#"}
+            target={item.link ? "_blank" : "_self"}
+            rel="noopener noreferrer"
+            className={`flex items-center gap-4 p-4 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105`}
           >
-            {item.icon}
-            {item.link ? (
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline hover:text-blue-600 transition-colors"
-              >
-                {item.text}
-              </a>
-            ) : (
-              <span>{item.text}</span>
-            )}
-          </div>
+            <div
+              className={`p-3 rounded-full ${item.bgColor} flex items-center justify-center`}
+            >
+              {React.cloneElement(item.icon, { className: item.textColor })}
+            </div>
+            <span className="font-medium text-gray-700">{item.text}</span>
+          </a>
         ))}
       </div>
     </div>
