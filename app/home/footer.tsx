@@ -36,14 +36,14 @@ export function Footer() {
         <div>
           <h4 className="text-lg font-semibold mb-3">Contact</h4>
           <ul className="text-gray-300 text-sm space-y-2">
-            <li>Email: support@quickrecharge.com</li>
-            <li>Phone: +234 800 123 4567</li>
+            <li>Email: support@payonce.com</li>
+            <li>Phone: +2348063249490</li>
           </ul>
         </div>
       </div>
-      {/* <p className="text-center text-gray-500 mt-10 text-sm">
-        &copy; {new Date().getFullYear()} QuickRecharge. All rights reserved.
-      </p> */}
+      <p className="text-center text-gray-500 mt-10 text-sm">
+        &copy; {new Date().getFullYear()} Payonce. All rights reserved.
+      </p>
     </footer>
   );
 }
