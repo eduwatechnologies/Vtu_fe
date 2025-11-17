@@ -41,8 +41,9 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <p className="text-center text-gray-500 mt-10 text-sm">
-        &copy; {new Date().getFullYear()} Payonce. All rights reserved.
+      <p className="text-center text-gray-500 text-sm">
+        &copy; {new Date().getFullYear()} Eduwa Technologies. All rights
+        reserved.
       </p>
     </footer>
   );

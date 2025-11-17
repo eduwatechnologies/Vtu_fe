@@ -130,12 +130,17 @@ export default function BuyExam() {
                       <button
                         key={index}
                         type="button"
-                        className={`p-2 rounded-lg border ${
-                          selectedExam === exam.name
-                            ? "border-blue-500"
-                            : "border-gray-300"
-                        } hover:border-blue-500 transition`}
+                        disabled={!exam.status} // ❗ Make the button truly unclickable
+                        className={`p-2 rounded-lg border
+      ${selectedExam === exam.name ? "border-blue-500" : "border-gray-300"}
+      ${
+        !exam.status ? "opacity-50 cursor-not-allowed" : "hover:border-blue-500"
+      }
+      transition
+    `}
                         onClick={() => {
+                          if (!exam.status) return; // prevent click logic (double protection)
+
                           setSelectedExam(exam.code);
                           setSelectedPlanId(exam?._id);
                           setFieldValue("type", exam.code);

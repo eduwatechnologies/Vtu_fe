@@ -395,7 +395,7 @@ export const getExamServices = createAsyncThunk(
 
       // Map service names to image paths
       const serviceImages: Record<string, string> = {
-        // jamb: "/images/jamb.png",
+        jamb: "/images/jamb.jpg",
         waec: "/images/weac.jpg",
         neco: "/images/neco.jpg",
         nabteb: "/images/nabteb.png",
