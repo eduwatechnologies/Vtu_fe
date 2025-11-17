@@ -49,11 +49,20 @@ export const ApTextInput = forwardRef<
       formikField = useField(name);
     }
 
+    // const handleChange = (
+    //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    // ) => {
+    //   if (!ignoreFormik) formikField?.[2].setValue(e.target.value);
+    //   onChange?.(e.target.value);
+    // };
+
     const handleChange = (
       e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-      if (!ignoreFormik) formikField?.[2].setValue(e.target.value);
-      onChange?.(e.target.value);
+      let value = e.target.value.replace(/\s+/g, ""); // removes all spaces
+
+      if (!ignoreFormik) formikField?.[2].setValue(value);
+      onChange?.(value);
     };
 
     return (
@@ -94,8 +103,7 @@ export const ApTextInput = forwardRef<
               {...(!ignoreFormik ? formikField[0] : {})}
               onChange={handleChange}
               maxLength={maxlength}
-            readOnly={readOnly}
-
+              readOnly={readOnly}
             />
 
             {type === "password" && (

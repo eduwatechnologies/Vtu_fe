@@ -128,7 +128,7 @@ function SignUp() {
               />
 
               <ApTextInput
-                label="PIN Code (optional)"
+                label="PIN Code"
                 name="pinCode"
                 placeHolder="Enter a 4-digit PIN code (optional)"
               />
