@@ -15,13 +15,13 @@ export function ServiceSection() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "MTN Data", price: "₦500", desc: "1.5GB for 30 Days" },
+              { title: "MTN Data", price: "₦550", desc: "1GB for 30 Days" },
               {
                 title: "Airtel Data",
-                price: "₦450",
-                desc: "1.5GB for 30 Days",
+                price: "₦600",
+                desc: "1GB for 30 Days",
               },
-              { title: "Glo Data", price: "₦400", desc: "1.5GB for 30 Days" },
+              { title: "Glo Data", price: "₦450", desc: "1GB for 30 Days" },
             ].map((plan, idx) => (
               <div
                 key={idx}
