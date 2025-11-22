@@ -14,11 +14,13 @@ import { useRouter } from "next/navigation";
 import { ApButton } from "@/components/button/button";
 import logo from "@/public/images/logo.png";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function ForgotPassword() {
   const dispatch = useDispatch<AppDispatch>();
   const { loading, user } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Validation Schema
   const validationSchema = Yup.object({
@@ -29,13 +31,16 @@ export default function ForgotPassword() {
 
   // Form Submission Handler
   const handleSubmit = async (values: any) => {
+    setIsSubmitting(true);
+
     const resultAction = await dispatch(requestPasswordReset(values));
     if (requestPasswordReset.fulfilled.match(resultAction)) {
       toast.success("✅ Email verified successfully");
-      router.push(`/auth/verify?email=${values.email}`);
+      router.push(`/auth/verify?email=${values.email}&type=reset`);
     } else {
       toast.error(`❌ ${resultAction.payload || "Email verification failed"}`);
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -67,9 +72,9 @@ export default function ForgotPassword() {
               <ApButton
                 type="submit"
                 className="w-full mt-4"
-                disabled={loading}
+                disabled={isSubmitting}
               >
-                {loading ? "Processing..." : "Submit"}
+                {isSubmitting ? "Processing..." : "Submit"}
               </ApButton>
             </Form>
           )}

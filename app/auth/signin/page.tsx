@@ -24,11 +24,20 @@ export default function SignIn() {
 
   const handleSubmit = async (values: any) => {
     const resultAction = await dispatch(loginUser(values));
+
     if (loginUser.fulfilled.match(resultAction)) {
       toast.success("Login successful");
       router.push("/dashboard");
     } else {
-      toast.error(` ${resultAction.payload || "Login failed"}`);
+      const errorMessage = (resultAction.payload as any)?.msg;
+      if (errorMessage === "Email not verified") {
+        router.push(`/auth/verify?email=${values.email}&type=verify`);
+        // toast.error("Kindly verify your email to login");
+
+        return;
+      }
+
+      toast.error(errorMessage || "Login failed!!");
     }
   };
 

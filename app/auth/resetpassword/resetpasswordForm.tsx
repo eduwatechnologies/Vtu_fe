@@ -10,6 +10,8 @@ import { resetPassword } from "@/redux/features/user/userThunk";
 import { AppDispatch } from "@/redux/store";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
+import logo from "@/public/images/logo.png";
+import Image from "next/image";
 
 export function ResetPasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,12 +44,15 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-primary bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-semibold text-center mb-4">
-          Reset Password
-        </h2>
-
+    <div className="flex justify-center items-center ">
+      <div className="bg-white/40 p-6 rounded-lg  w-full max-w-sm">
+        <div className="flex justify-center mb-4">
+          <Image src={logo} alt="PayOnce logo" width={50} height={40} />
+        </div>
+        <h2 className="text-2xl font-bold mb-4 text-center">Reset Password</h2>
+        <p className="text-gray-600 text-sm mb-6 text-center">
+          Enter your registered email!.
+        </p>
         <Formik
           initialValues={{
             email: email,

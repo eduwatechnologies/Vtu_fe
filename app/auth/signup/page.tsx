@@ -7,24 +7,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { signUpUser } from "@/redux/features/user/userThunk";
 import { ApButton } from "@/components/button/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import logo from "@/public/images/logo.png";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 
 function SignUp() {
   const dispatch = useDispatch<AppDispatch>();
   const { loading } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
-  // ✅ Grab referral code from query params
   const searchParams = useSearchParams();
-
-  // ✅ Grab referral code from query params
   const referralFromUrl = searchParams.get("ref") || "";
 
-  const validationSchema = Yup.object({
+  // --- Step control ---
+  const [step, setStep] = useState(1);
+
+  // --- VALIDATIONS ---
+  const stepOneSchema = Yup.object({
     firstName: Yup.string().required("First name is required"),
     lastName: Yup.string().required("Last name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
@@ -32,38 +32,39 @@ function SignUp() {
     phone: Yup.string()
       .matches(/^\d{11}$/, "Phone number must be exactly 11 digits")
       .required("Phone number is required"),
+  });
+
+  const stepTwoSchema = Yup.object({
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], "Passwords must match")
       .required("Confirm Password is required"),
-    referralCode: Yup.string()
-      .matches(/^[a-zA-Z0-9]*$/, "Referral code must be alphanumeric")
-      .optional(),
     pinCode: Yup.string()
       .matches(/^\d{4}$/, "PIN code must be exactly 4 digits")
-      .nullable()
       .required("PIN code is required"),
+    referralCode: Yup.string().optional(),
   });
 
-  // ✅ Form Submission Handler
+  // --- Submit ---
   const handleSubmit = async (values: any) => {
     const resultAction = await dispatch(signUpUser(values));
     if (signUpUser.fulfilled.match(resultAction)) {
       toast.success("🎉 Sign-up successful! Redirecting...");
-      router.push("/auth/signin");
+      router.push(`/auth/verify?email=${values.email}&type=verify`);
     } else {
       toast.error(`❌ ${resultAction.payload || "Signup failed"}`);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen ">
-      <div className="bg-white p-6 w-96">
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="bg-white p-6 w-96 rounded-md shadow">
         <div className="flex justify-center mb-4">
           <Image src={logo} alt="PayOnce logo" width={50} height={40} />
         </div>
+
         <h2 className="text-2xl font-semibold text-center mb-2">
           Create Account
         </h2>
@@ -79,73 +80,71 @@ function SignUp() {
             email: "",
             state: "",
             phone: "",
-            referralCode: referralFromUrl || "",
+            referralCode: referralFromUrl,
             password: "",
             confirmPassword: "",
             pinCode: "",
           }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
+          validationSchema={step === 1 ? stepOneSchema : stepTwoSchema}
+          onSubmit={(values) => {
+            if (step === 1) {
+              setStep(2);
+            } else {
+              handleSubmit(values);
+            }
+          }}
         >
           {() => (
             <Form>
-              <ApTextInput
-                label="First Name"
-                name="firstName"
-                placeHolder="Enter your first name"
-              />
-              <ApTextInput
-                label="Last Name"
-                name="lastName"
-                placeHolder="Enter your last name"
-              />
-              <ApTextInput
-                label="Email"
-                name="email"
-                placeHolder="Enter your email"
-              />
-              <ApTextInput
-                label="State"
-                name="state"
-                placeHolder="Enter your state"
-              />
-              <ApTextInput
-                label="Phone"
-                name="phone"
-                placeHolder="Enter your phone number"
-              />
-              <ApTextInput
-                label="Password"
-                name="password"
-                type="password"
-                placeHolder="Enter your password"
-              />
-              <ApTextInput
-                label="Confirm Password"
-                name="confirmPassword"
-                type="password"
-                placeHolder="Confirm your password"
-              />
+              {step === 1 && (
+                <>
+                  <ApTextInput label="First Name" name="firstName" />
+                  <ApTextInput label="Last Name" name="lastName" />
+                  <ApTextInput label="Email" name="email" />
+                  <ApTextInput label="State" name="state" />
+                  <ApTextInput label="Phone" name="phone" />
 
-              <ApTextInput
-                label="PIN Code"
-                name="pinCode"
-                placeHolder="Enter a 4-digit PIN code (optional)"
-              />
+                  <ApButton type="submit" className="w-full mt-4">
+                    Continue →
+                  </ApButton>
+                </>
+              )}
 
-              <ApTextInput
-                label="Referral Code (optional)"
-                name="referralCode"
-                placeHolder="Enter referral code (if any)"
-              />
+              {step === 2 && (
+                <>
+                  <ApTextInput
+                    label="Password"
+                    name="password"
+                    type="password"
+                  />
+                  <ApTextInput
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    type="password"
+                  />
+                  <ApTextInput label="PIN Code" name="pinCode" />
+                  <ApTextInput
+                    label="Referral Code (optional)"
+                    name="referralCode"
+                  />
 
-              <ApButton
-                type="submit"
-                className="w-full mt-4"
-                disabled={loading}
-              >
-                {loading ? "Signing Up..." : "Sign Up"}
-              </ApButton>
+                  <ApButton
+                    type="submit"
+                    disabled={loading}
+                    className="w-full mt-4"
+                  >
+                    {loading ? "Signing Up..." : "Complete Registration"}
+                  </ApButton>
+
+                  <button
+                    type="button"
+                    className="text-sm text-blue-600 mt-3"
+                    onClick={() => setStep(1)}
+                  >
+                    ← Back to Step 1
+                  </button>
+                </>
+              )}
             </Form>
           )}
         </Formik>
@@ -161,7 +160,7 @@ function SignUp() {
           Want to explore more?{" "}
           <Link
             href="/"
-            className="inline-block font-medium text-green-600 hover:text-blue-800 transition-colors duration-200 underline-offset-4 hover:underline"
+            className="font-medium text-green-600 hover:text-blue-800 hover:underline"
           >
             Go back home
           </Link>

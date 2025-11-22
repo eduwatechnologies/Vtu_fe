@@ -27,7 +27,12 @@ export const loginUser = createAsyncThunk(
 
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error || "Login failed");
+      const message =
+        error.response?.data?.error ||
+        error.response?.data?.msg ||
+        "Login failed";
+
+      return rejectWithValue({ msg: message });
     }
   }
 );
