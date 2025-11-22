@@ -13,7 +13,7 @@ import {
 } from "@/redux/features/user/userThunk";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ApButton } from "@/components/button/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "@/public/images/logo.png";
 import Image from "next/image";
 
@@ -23,7 +23,25 @@ export function VerifyEmailForm() {
   const email = searchParams.get("email") || "";
   const type = searchParams.get("type") || "verify"; // 'verify' or 'reset'
   const router = useRouter();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Start countdown for resend button
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  // Automatically send code if first visit and type is verify
+  useEffect(() => {
+    if (type === "verify" && email) {
+      handleResendCode();
+    }
+  }, [email, type]);
 
   const validationSchema = Yup.object({
     code: Yup.string()
@@ -36,43 +54,54 @@ export function VerifyEmailForm() {
 
     let resultAction;
 
-    if (type === "reset") {
-      // 🔐 User is verifying a reset password code
-      resultAction = await dispatch(verifyResetCode(values));
-
-      if (verifyResetCode.fulfilled.match(resultAction)) {
-        toast.success("✅ Code verified");
-        router.push(
-          `/auth/resetpassword?email=${values.email}&code=${values.code}`
-        );
+    try {
+      if (type === "reset") {
+        // 🔐 User is verifying a reset password code
+        resultAction = await dispatch(verifyResetCode(values));
+        if (verifyResetCode.fulfilled.match(resultAction)) {
+          toast.success("✅ Code verified");
+          router.push(
+            `/auth/resetpassword?email=${values.email}&code=${values.code}`
+          );
+        } else {
+          toast.error(
+            `❌ ${resultAction.payload || "Code verification failed"}`
+          );
+        }
       } else {
-        toast.error(`❌ ${resultAction.payload || "Code verification failed"}`);
+        // 📩 User is verifying email (signup flow)
+        resultAction = await dispatch(verifyEmail(values));
+        if (verifyEmail.fulfilled.match(resultAction)) {
+          toast.success("✅ Email verified successfully");
+          router.push("/auth/signin");
+        } else {
+          toast.error(
+            `❌ ${resultAction.payload || "Email verification failed"}`
+          );
+        }
       }
-    } else {
-      // 📩 User is verifying email (signup flow)
-      resultAction = await dispatch(verifyEmail(values));
-
-      if (verifyEmail.fulfilled.match(resultAction)) {
-        toast.success("✅ Email verified successfully");
-        router.push("/auth/signin");
-      } else {
-        toast.error(
-          `❌ ${resultAction.payload || "Email verification failed"}`
-        );
-      }
+    } catch (err: any) {
+      toast.error(`❌ ${err.message || "Something went wrong"}`);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   };
 
   const handleResendCode = async () => {
-    const resultAction = await dispatch(resendVerificationCode(email));
+    if (!email) return;
+    if (resendCooldown > 0) return;
 
-    if (resendVerificationCode.fulfilled.match(resultAction)) {
-      toast.success("🔄 Verification code resent to your email");
-    } else {
-      const errorMsg = (resultAction.payload as { msg: string })?.msg;
-      toast.error(errorMsg || "Failed to resend verification code");
+    try {
+      const resultAction = await dispatch(resendVerificationCode(email));
+      if (resendVerificationCode.fulfilled.match(resultAction)) {
+        toast.success("Verification code resent to your email");
+        setResendCooldown(30); // 30 seconds cooldown
+      } else {
+        const errorMsg = (resultAction.payload as { msg: string })?.msg;
+        toast.error(errorMsg || "Failed to resend verification code");
+      }
+    } catch (err: any) {
+      toast.error(`❌ ${err.message || "Failed to resend code"}`);
     }
   };
 
@@ -85,7 +114,7 @@ export function VerifyEmailForm() {
         <h2 className="text-2xl font-semibold mb-4">Verify Your Email</h2>
         <p className="text-gray-600 text-sm mb-6">
           A 6-digit verification code has been sent to your email. Please enter
-          the code below.
+          the code below!!.
         </p>
 
         <Formik
@@ -113,14 +142,17 @@ export function VerifyEmailForm() {
         </Formik>
 
         <p className="text-center mt-4 text-sm">
-          Didn't receive the code?
+          Didn't receive the code?{" "}
           <button
-            className="text-blue-500  hover:underline cursor:pointer"
-            onClick={() => {
-              handleResendCode();
-            }}
+            className={`text-blue-500 hover:underline cursor-pointer ${
+              resendCooldown > 0 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleResendCode}
+            disabled={resendCooldown > 0}
           >
-            Resend Code
+            {resendCooldown > 0
+              ? `Resend in ${resendCooldown}s`
+              : "Resend Code"}
           </button>
         </p>
 
