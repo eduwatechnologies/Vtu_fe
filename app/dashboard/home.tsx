@@ -16,7 +16,8 @@ import {
   EyeOff,
   Receipt,
   Gift,
-  Copy 
+  Copy,
+  Smartphone,
 } from "lucide-react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,7 +31,7 @@ import TopSheetModal from "@/components/modal/topsheetModal";
 import { getLatestNotification } from "@/redux/features/notifications/notificationSlice";
 
 export const HomeDashboard = () => {
-   const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const { notification } = useSelector(
     (state: RootState) => state.notifications
@@ -80,115 +81,131 @@ export const HomeDashboard = () => {
   };
 
   return (
-    <div >
+    <div>
       <ApHomeHeader />
-  <div
-  className="
+      <div
+        className="
     relative overflow-hidden rounded-2xl p-6 mb-6
     text-white shadow-xl
     bg-purple-900
     bg-gradient-to-br from-purple-900 via-purple-800 to-purple-950
     ring-1 ring-white/10
     transition-transform duration-200 ease-out hover:scale-[1.02]"
->
-  {/* Soft glowing background (Safari-friendly) */}
-  <div className="absolute inset-0 -z-10">
-    {/* Base gradient layer */}
-    <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-950 opacity-90" />
-    {/* Glow effect */}
-    <div className="absolute w-2/3 h-2/3 bg-purple-500/20 blur-3xl top-0 right-0 rounded-full" />
-  </div>
+      >
+        {/* Soft glowing background (Safari-friendly) */}
+        <div className="absolute inset-0 -z-10">
+          {/* Base gradient layer */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-950 opacity-90" />
+          {/* Glow effect */}
+          <div className="absolute w-2/3 h-2/3 bg-purple-500/20 blur-3xl top-0 right-0 rounded-full" />
+        </div>
 
-  {/* Wallet header */}
-  <div className="flex justify-between items-center mb-3">
-    <h2 className="text-sm font-semibold tracking-wide text-purple-300">
-      Wallet Balance
-    </h2>
-    <button
-      onClick={toggleBalance}
-      className="p-1 rounded-lg hover:bg-white/10 transition"
-    >
-      {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
-    </button>
-  </div>
-
-  {/* Balance display */}
-  <p className="text-5xl font-extrabold tracking-tight text-purple-300 drop-shadow-sm">
-    {showBalance
-      ? `₦${Number(user?.balance ?? 0).toLocaleString()}`
-      : "••••••"}
-  </p>
-
-  {/* Bonus and claim */}
-  <div className="grid grid-cols-2 gap-3 mt-6 text-sm">
-    <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
-      <TrendingUp size={14} className="text-emerald-400" />
-      <span>Bonus: ₦{user?.bonus ?? "0.00"}</span>
-    </div>
-    <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
-      <Gift size={14} className="text-pink-400" />
-      <span>Claim: ₦0.00</span>
-    </div>
-  </div>
-
-  {/* Account details */}
- <div className="mt-5 bg-white/10 rounded-lg p-3 backdrop-blur-md text-sm">
-      <p className="font-semibold text-purple-300">
-        {user?.account?.bankName}
-      </p>
-
-      <div className="mt-1 space-y-1 opacity-90">
-        <div className="flex items-center justify-between">
-          <p>
-            <span className="font-bold text-white">Acc No:</span>{" "}
-            {user?.account?.accountNumber}
-          </p>
-
+        {/* Wallet header */}
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-sm font-semibold tracking-wide text-purple-300">
+            Wallet Balance
+          </h2>
           <button
-            onClick={() => handleCopy(user?.account?.accountNumber || "")}
-            className="text-purple-300 hover:text-purple-400"
+            onClick={toggleBalance}
+            className="p-1 rounded-lg hover:bg-white/10 transition"
           >
-            <Copy size={16} />
+            {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         </div>
 
-        <p>
-          <span className="font-bold text-white">Acc Name:</span>{" "}
-          {user?.account?.accountName}
+        {/* Balance display */}
+        <p className="text-5xl font-extrabold tracking-tight text-purple-300 drop-shadow-sm">
+          {showBalance
+            ? `₦${Number(user?.balance ?? 0).toLocaleString()}`
+            : "••••••"}
         </p>
 
-        {copied && (
-          <p className="text-xs text-green-400 mt-1">Copied ✅</p>
-        )}
-      </div>
-    </div>
-</div>
+        {/* Bonus and claim */}
+        <div className="grid grid-cols-2 gap-3 mt-6 text-sm">
+          <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
+            <TrendingUp size={14} className="text-emerald-400" />
+            <span>Bonus: ₦{user?.bonus ?? "0.00"}</span>
+          </div>
+          <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
+            <Gift size={14} className="text-pink-400" />
+            <span>Claim: ₦0.00</span>
+          </div>
+        </div>
 
+        {/* Account details */}
+        <div className="mt-5 bg-white/10 rounded-lg p-3 backdrop-blur-md text-sm">
+          <p className="font-semibold text-purple-300">
+            {user?.account?.bankName}
+          </p>
+
+          <div className="mt-1 space-y-1 opacity-90">
+            <div className="flex items-center justify-between">
+              <p>
+                <span className="font-bold text-white">Acc No:</span>{" "}
+                {user?.account?.accountNumber}
+              </p>
+
+              <button
+                onClick={() => handleCopy(user?.account?.accountNumber || "")}
+                className="text-purple-300 hover:text-purple-400"
+              >
+                <Copy size={16} />
+              </button>
+            </div>
+
+            <p>
+              <span className="font-bold text-white">Acc Name:</span>{" "}
+              {user?.account?.accountName}
+            </p>
+
+            {copied && <p className="text-xs text-green-400 mt-1">Copied ✅</p>}
+          </div>
+        </div>
+      </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-4 gap-3 mb-6">
         {[
           {
             id: 1,
-            icon: <Phone size={24} className="text-blue-500" />,
+            icon: <Phone size={24} className="text-purple-600" />,
             label: "Airtime",
             link: "/dashboard/buyAirtime",
           },
           {
             id: 2,
-            icon: <Wifi size={24} className="text-green-500" />,
+            icon: <Wifi size={24} className="text-purple-600" />,
             label: "Data",
             link: "/dashboard/buyData",
           },
           {
             id: 3,
-            icon: <Bolt size={24} className="text-yellow-500" />,
+            icon: <Bolt size={24} className="text-purple-600" />,
             label: "Electricity",
             link: "/dashboard/buyElectricity",
           },
+
           {
             id: 4,
-            icon: <Grid size={24} className="text-gray-600" />,
+            icon: <Smartphone size={24} className="text-purple-600" />,
+            label: "A2Cash",
+            link: "/dashboard/airtime2cash",
+          },
+          {
+            id: 5,
+            icon: <GraduationCap size={24} className="text-purple-600" />,
+            label: "Exam",
+            link: "/dashboard/buyExam",
+          },
+          {
+            id: 6,
+            icon: <Tv2 size={24} className="text-purple-600" />,
+            label: "TV",
+            link: "/dashboard/buyCableTv",
+          },
+          {
+            id: 7,
+            icon: <Grid size={24} className="text-purple-600" />,
             label: "More",
             action: () => setIsOpen(true),
           },

@@ -14,7 +14,7 @@ import {
   fetchDataPlans,
   getExamServices,
   purchaseExam,
-} from "@/redux/features/easyAccess/service";
+} from "@/redux/features/services/serviceThunk";
 
 export default function BuyExam() {
   const [loading, setLoading] = useState(false);
@@ -84,7 +84,7 @@ export default function BuyExam() {
     };
 
     setLoading(true);
-    const resultAction = await dispatch(purchaseExam({ payload }));
+    const resultAction = await dispatch(purchaseExam(payload as any));
     setLoading(false);
 
     if (purchaseExam.fulfilled.match(resultAction)) {

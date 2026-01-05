@@ -1,5 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { currentUser, loginUser, signUpUser } from "./userThunk";
+import {
+  currentUser,
+  loginUser,
+  signUpUser,
+  generateApiKey,
+  getApiKey,
+} from "./userThunk";
 import { User } from "./type";
 
 // initialize userToken from local storage
@@ -8,6 +14,7 @@ interface AuthState {
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
+  apiKey: string | null;
   loading: boolean;
   error: string | null;
 }
@@ -16,6 +23,7 @@ const initialState: AuthState = {
   user: null,
   accessToken: null,
   refreshToken: null,
+  apiKey: null,
   loading: false,
   error: null,
 };
@@ -67,6 +75,31 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(currentUser.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.loading = false;
+      })
+      .addCase(generateApiKey.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(
+        generateApiKey.fulfilled,
+        (state, action: PayloadAction<any>) => {
+          state.apiKey = action.payload.apiKey;
+          state.loading = false;
+        }
+      )
+      .addCase(generateApiKey.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.loading = false;
+      })
+      .addCase(getApiKey.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getApiKey.fulfilled, (state, action: PayloadAction<any>) => {
+        state.apiKey = action.payload.apiKey;
+        state.loading = false;
+      })
+      .addCase(getApiKey.rejected, (state, action) => {
         state.error = action.payload as string;
         state.loading = false;
       });

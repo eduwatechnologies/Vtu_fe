@@ -17,6 +17,8 @@ interface IProps {
   ignoreFormik?: boolean;
   containerClassName?: string;
   onChange?: (val: string) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   maxlength?: number;
 }
 
@@ -29,15 +31,17 @@ export const ApTextInput = forwardRef<
       label,
       type = "text",
       name,
-      value = "",
       readOnly = false,
       onChange,
+      onFocus,
+      onBlur,
       inputClassName = "",
       placeHolder = "",
       containerClassName = "",
       disabled = false,
       ignoreFormik = false,
       maxlength,
+      value,
     },
     ref
   ) => {
@@ -49,17 +53,15 @@ export const ApTextInput = forwardRef<
       formikField = useField(name);
     }
 
-    // const handleChange = (
-    //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    // ) => {
-    //   if (!ignoreFormik) formikField?.[2].setValue(e.target.value);
-    //   onChange?.(e.target.value);
-    // };
-
     const handleChange = (
       e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-      let value = e.target.value.replace(/\s+/g, ""); // removes all spaces
+      let value = e.target.value;
+
+      // Remove ALL non-digit characters for number fields
+      if (type === "number") {
+        value = value.replace(/[^\d]/g, "");
+      }
 
       if (!ignoreFormik) formikField?.[2].setValue(value);
       onChange?.(value);
@@ -72,6 +74,7 @@ export const ApTextInput = forwardRef<
             {label}
           </ApText>
         )}
+
         {type === "textarea" ? (
           <textarea
             ref={inputRef as React.RefObject<HTMLTextAreaElement>}
@@ -81,29 +84,33 @@ export const ApTextInput = forwardRef<
             readOnly={readOnly}
             name={name}
             rows={5}
-            {...(!ignoreFormik ? formikField[0] : {})}
+            {...(!ignoreFormik ? formikField[0] : { value })}
             onChange={handleChange}
+            onFocus={onFocus}
+            onBlur={onBlur}
           />
         ) : (
           <div className="relative mb-2">
             <input
               ref={inputRef as React.RefObject<HTMLInputElement>}
-              // type={type === "password" && !showPassword ? "password" : "text"}
+              // Force number inputs to be text (more stable)
               type={
                 type === "password" && !showPassword
                   ? "password"
                   : type === "number"
-                  ? "number"
+                  ? "text"
                   : "text"
               }
               className={`w-full h-11 rounded-md border border-gray-300 px-3 text-sm focus:border-green-300 focus:outline-none disabled:opacity-50 ${inputClassName}`}
               placeholder={placeHolder}
               disabled={disabled}
-              name={name}
-              {...(!ignoreFormik ? formikField[0] : {})}
-              onChange={handleChange}
-              maxLength={maxlength}
               readOnly={readOnly}
+              name={name}
+              maxLength={maxlength}
+              {...(!ignoreFormik ? formikField[0] : { value })}
+              onChange={handleChange}
+              onFocus={onFocus}
+              onBlur={onBlur}
             />
 
             {type === "password" && (
@@ -117,6 +124,7 @@ export const ApTextInput = forwardRef<
             )}
           </div>
         )}
+
         {!ignoreFormik && (
           <ErrorMessage
             name={name}
@@ -128,3 +136,5 @@ export const ApTextInput = forwardRef<
     );
   }
 );
+
+ApTextInput.displayName = "ApTextInput";

@@ -10,11 +10,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { ApButton } from "@/components/button/button";
 import ApHeader from "@/components/Apheader";
+import { User } from "lucide-react";
 import {
   getDataServices,
   purchaseAirtime,
-} from "@/redux/features/easyAccess/service";
-import { detectNetwork } from "@/utils/networkChecker";
+} from "@/redux/features/services/serviceThunk";
+import { useBeneficiaries } from "@/hooks/useBenefitiaries";
 
 interface FormValues {
   phone: string;
@@ -43,6 +44,9 @@ export default function BuyAirtime() {
   const { user } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
+  const { beneficiaries, addBeneficiary } = useBeneficiaries();
+  const [showDropdown, setShowDropdown] = useState(false);
+
   // Fetch available airtime networks
   const dataServices = useSelector(
     (state: RootState) => state.easyAccessdataPlans.dataServices
@@ -61,7 +65,6 @@ export default function BuyAirtime() {
     const payload = {
       ...values,
       networkId: selectedNetwork,
-      userId: user?._id,
       amount: Number(values.amount),
       pinCode,
     };
@@ -73,6 +76,12 @@ export default function BuyAirtime() {
       if (purchaseAirtime.fulfilled.match(resultAction)) {
         const { transactionId } = resultAction.payload;
         toast.success("✅ Airtime purchase successful!");
+        addBeneficiary({
+          id: Date.now(),
+          name: values.phone,
+          phone: values.phone,
+        });
+
         router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
         toast.error(resultAction.payload?.error || "Purchase failed...!");
@@ -152,13 +161,58 @@ export default function BuyAirtime() {
                     value={values.network}
                   />
 
-                  <ApTextInput
-                    label="Phone Number"
-                    name="phone"
-                    type="text"
-                    placeHolder="Enter phone number"
-                    onChange={(value: string) => setFieldValue("phone", value)}
-                  />
+                  <div className="relative">
+                    <ApTextInput
+                      name="phone"
+                      type="text"
+                      placeHolder="Enter phone number"
+                      containerClassName="flex-1 pt-2   border-none focus:ring-0 focus:outline-none text-sm"
+                      value={values.phone}
+                      onChange={(value: string) =>
+                        setFieldValue("phone", value)
+                      }
+                      onFocus={() => setShowDropdown(true)}
+                      onBlur={() => {
+                        // Small delay to allow click event to register
+                        setTimeout(() => setShowDropdown(false), 200);
+                      }}
+                      ignoreFormik
+                    />
+                    
+                    {showDropdown && beneficiaries.length > 0 && (
+                      <div className="absolute z-20 left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                        <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Recent Beneficiaries</span>
+                        </div>
+                        <div className="max-h-60 overflow-y-auto">
+                          {[...beneficiaries]
+                            .sort((a, b) => b.id - a.id)
+                            .slice(0, 4)
+                            .map((b) => (
+                            <button
+                              key={b.id}
+                              type="button"
+                              className="w-full text-left px-4 py-3 hover:bg-green-50 transition-colors flex items-center gap-3 border-b border-gray-50 last:border-0"
+                              onClick={() => {
+                                setFieldValue("phone", b.phone);
+                                setShowDropdown(false);
+                              }}
+                            >
+                              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xs shrink-0">
+                                {b.name?.charAt(0)?.toUpperCase() || b.phone.slice(-2)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">{b.name || "Unknown"}</p>
+                                <p className="text-xs text-gray-500 truncate">{b.phone}</p>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                     
+                    
 
                   <ApTextInput
                     label="Amount (₦)"
@@ -180,6 +234,7 @@ export default function BuyAirtime() {
                     }}
                     title="Continue"
                   />
+
                 </Form>
               );
             }}

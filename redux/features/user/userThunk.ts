@@ -98,6 +98,34 @@ export const resendVerificationCode = createAsyncThunk(
   }
 );
 
+export const generateApiKey = createAsyncThunk(
+  "auth/generateApiKey",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/auth/generate-api-key");
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.error || "Failed to generate API Key"
+      );
+    }
+  }
+);
+
+export const getApiKey = createAsyncThunk(
+  "auth/getApiKey",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/auth/api-key");
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.error || "Failed to fetch API Key"
+      );
+    }
+  }
+);
+
 export const requestPasswordReset = createAsyncThunk(
   "auth/requestPasswordReset ",
   async (data: { email: string }, { rejectWithValue }) => {

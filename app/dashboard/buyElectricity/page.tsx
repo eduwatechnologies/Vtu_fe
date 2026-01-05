@@ -8,16 +8,16 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { payElectricity } from "@/redux/features/services/serviceThunk";
 import GlobalModal from "@/components/modal/globalModal";
 import { ApButton } from "@/components/button/button";
 import ApHeader from "@/components/Apheader";
 import {
-  Electricity,
   getElectricityServices,
   handleVerifyMeter,
   purchaseElectricity,
-} from "@/redux/features/easyAccess/service";
+} from "@/redux/features/services/serviceThunk";
+import { Electricity } from "@/redux/features/services/type";
+import { useBeneficiaries } from "@/hooks/useBenefitiaries";
 
 interface CustomerDetails {
   name?: string;
@@ -49,6 +49,9 @@ export default function BuyElectricity() {
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [formData, setFormData] = useState<any | null>(null);
   const [pinCode, setPinCode] = useState("");
+
+  const { beneficiaries, addBeneficiary } = useBeneficiaries("meter_beneficiaries");
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const electricityServices = useSelector(
     (state: RootState) => state.easyAccessdataPlans.electricityServices
@@ -82,7 +85,7 @@ export default function BuyElectricity() {
         amount: values.amount,
       };
 
-      const resultAction = await dispatch(handleVerifyMeter(payload));
+      const resultAction = await dispatch(handleVerifyMeter(payload as any));
 
       if (handleVerifyMeter.fulfilled.match(resultAction)) {
         const { Customer_Name, Address } = resultAction.payload.message.content;
@@ -138,11 +141,16 @@ export default function BuyElectricity() {
 
     setLoading(true);
     try {
-      const resultAction = await dispatch(purchaseElectricity({ payload }));
+      const resultAction = await dispatch(purchaseElectricity(payload as any));
 
       if (purchaseElectricity.fulfilled.match(resultAction)) {
         const { request_id } = resultAction.payload;
         toast.success("✅ Electricity purchase successful!");
+        addBeneficiary({
+          id: Date.now(),
+          name: customerDetails.name || "Unknown Meter",
+          phone: values.meterno,
+        });
         router.push(`/dashboard/transaction?request_id=${request_id}`);
       } else {
         throw new Error(resultAction.error.message || "Payment failed");
@@ -193,12 +201,61 @@ export default function BuyElectricity() {
             {({ values, setFieldValue, isValid, dirty }) => (
               <Form>
                 {/* Meter Number */}
-                <ApTextInput
-                  label="Meter Number"
-                  name="meterno"
-                  type="text"
-                  placeHolder="Enter your meter number"
-                />
+                <div className="relative">
+                  <ApTextInput
+                    label="Meter Number"
+                    name="meterno"
+                    type="text"
+                    placeHolder="Enter your meter number"
+                    value={values.meterno}
+                    onChange={(value: string) =>
+                      setFieldValue("meterno", value)
+                    }
+                    onFocus={() => setShowDropdown(true)}
+                    onBlur={() => {
+                      setTimeout(() => setShowDropdown(false), 200);
+                    }}
+                    ignoreFormik={false}
+                  />
+
+                  {showDropdown && beneficiaries.length > 0 && (
+                    <div className="absolute z-20 left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                      <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Saved Meters
+                        </span>
+                      </div>
+                      <div className="max-h-60 overflow-y-auto">
+                        {[...beneficiaries]
+                          .sort((a, b) => b.id - a.id)
+                          .slice(0, 4)
+                          .map((b) => (
+                            <button
+                              key={b.id}
+                              type="button"
+                              className="w-full text-left px-4 py-3 hover:bg-green-50 transition-colors flex items-center gap-3 border-b border-gray-50 last:border-0"
+                              onClick={() => {
+                                setFieldValue("meterno", b.phone);
+                                setShowDropdown(false);
+                              }}
+                            >
+                              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xs shrink-0">
+                                {b.name?.charAt(0)?.toUpperCase() || "M"}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">
+                                  {b.name || "Unknown"}
+                                </p>
+                                <p className="text-xs text-gray-500 truncate">
+                                  {b.phone}
+                                </p>
+                              </div>
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Customer Details */}
                 {isMeterVerified && (

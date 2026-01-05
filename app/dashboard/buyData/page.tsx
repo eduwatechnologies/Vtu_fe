@@ -11,13 +11,14 @@ import { ApTextInput } from "@/components/input/textInput";
 import { ApButton } from "@/components/button/button";
 import ApHeader from "@/components/Apheader";
 import GlobalModal from "@/components/modal/globalModal";
+import { useBeneficiaries } from "@/hooks/useBenefitiaries";
 
 import {
   purchaseData,
   fetchDataPlans,
   fetchDataCategories,
   getDataServices,
-} from "@/redux/features/easyAccess/service";
+} from "@/redux/features/services/serviceThunk";
 import { AppDispatch, RootState } from "@/redux/store";
 
 type Step = "categories" | "plans";
@@ -26,23 +27,19 @@ export default function EasyAccessBuyData() {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
+  React.useEffect(() => {
+    dispatch(getDataServices("data"));
+  }, [dispatch]);
+
   const { user } = useSelector((state: RootState) => state.auth);
   const plans = useSelector(
-    (state: RootState) => state.easyAccessdataPlans.plans
+    (state: RootState) => state.easyAccessdataPlans?.plans
   );
 
   // Select the list of data services from redux
   const dataServices = useSelector(
-    (state: RootState) => state.easyAccessdataPlans.dataServices
+    (state: RootState) => state.easyAccessdataPlans?.dataServices
   );
-
-  const purchaseError = useSelector(
-    (state: RootState) => state.easyAccessdataPlans.purchaseError
-  );
-
-  React.useEffect(() => {
-    dispatch(getDataServices("data"));
-  }, [dispatch]);
 
   // UI States
   const [selectedNetwork, setSelectedNetwork] = useState<string>("");
@@ -52,6 +49,9 @@ export default function EasyAccessBuyData() {
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<any>(null);
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
+
+  const { beneficiaries, addBeneficiary } = useBeneficiaries();
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // Input & form states
   const [formData, setFormData] = useState<any>(null);
@@ -145,7 +145,6 @@ export default function EasyAccessBuyData() {
 
     const payload = {
       networkId: selectedNetwork,
-      userId: user?._id,
       dataType: selectedPlan.category,
       planId: selectedPlan._id,
       phone: values.phone,
@@ -159,6 +158,11 @@ export default function EasyAccessBuyData() {
 
       if (purchaseData.fulfilled.match(resultAction)) {
         toast.success("Data purchase successful!");
+        addBeneficiary({
+          id: Date.now(),
+          name: values.phone,
+          phone: values.phone,
+        });
         const { transactionId } = resultAction.payload;
         router.push(`/dashboard/transaction?request_id=${transactionId}`);
       } else {
@@ -198,7 +202,7 @@ export default function EasyAccessBuyData() {
               <Form>
                 {/* NETWORK SELECTION */}
                 <div className="grid grid-cols-4 gap-4 mb-4">
-                  {dataServices.map((service: any) => (
+                  {dataServices?.map((service: any) => (
                     <button
                       key={service._id}
                       type="button"
@@ -231,12 +235,61 @@ export default function EasyAccessBuyData() {
                   ))}
                 </div>
 
-                <ApTextInput
-                  label="Phone Number"
-                  name="phone"
-                  type="text"
-                  placeHolder="Enter phone number"
-                />
+                <div className="relative">
+                  <ApTextInput
+                    label="Phone Number"
+                    name="phone"
+                    type="text"
+                    placeHolder="Enter phone number"
+                    value={values.phone}
+                    onChange={(value: string) => setFieldValue("phone", value)}
+                    onFocus={() => setShowDropdown(true)}
+                    onBlur={() => {
+                      // Small delay to allow click event to register
+                      setTimeout(() => setShowDropdown(false), 200);
+                    }}
+                    ignoreFormik={false}
+                  />
+
+                  {showDropdown && beneficiaries.length > 0 && (
+                    <div className="absolute z-20 left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                      <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Recent Beneficiaries
+                        </span>
+                      </div>
+                      <div className="max-h-60 overflow-y-auto">
+                        {[...beneficiaries]
+                          .sort((a, b) => b.id - a.id)
+                          .slice(0, 4)
+                          .map((b) => (
+                            <button
+                              key={b.id}
+                              type="button"
+                              className="w-full text-left px-4 py-3 hover:bg-green-50 transition-colors flex items-center gap-3 border-b border-gray-50 last:border-0"
+                              onClick={() => {
+                                setFieldValue("phone", b.phone);
+                                setShowDropdown(false);
+                              }}
+                            >
+                              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xs shrink-0">
+                                {b.name?.charAt(0)?.toUpperCase() ||
+                                  b.phone.slice(-2)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">
+                                  {b.name || "Unknown"}
+                                </p>
+                                <p className="text-xs text-gray-500 truncate">
+                                  {b.phone}
+                                </p>
+                              </div>
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <ApTextInput
                   label="Data Plan"

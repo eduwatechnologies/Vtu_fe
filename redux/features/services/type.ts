@@ -1,33 +1,35 @@
-export interface PurchaseDataPayload {
-  amount: number;
-  phone: number;
-  network: string;
+// --- Types ---
+export interface FetchDataPlansArgs {
+  network?: string; // optional, can be used as query
+  category?: string; // SME, gifting, etc.
+  serviceType?: string;
 }
 
-export interface PurchaseAirtimePayload {
-  amount: number;
-  phoneNumber: string;
+export interface PlansResponse {
+  message: string;
+  plans: any[]; // now a flat array from your DB, each with id, name, price etc.
 }
 
-export interface PayElectricityPayload {
-  meterNumber: string;
-  amount: number;
-  provider: string;
+export interface Electricity {
+  company: string;
+  metertype: string;
+  meterno: string;
+  amount: string;
+  phone: string;
 }
 
-export interface SubscribeCablePayload {
-  smartCardNumber: string;
-  packageId: string;
-  provider: string;
-}
+// typescript types
+export type PurchaseAirtimePayload = {
+  planId: string;
+  phone: string;
+  userId: string;
+  pinCode: string;
+  amount: string;
+  airtimeType: string;
+};
 
-export interface PayExamPayload {
-  examType: string;
-  candidateId: string;
-  amount: number;
-}
-
-export interface VerifyPayload {
-  smartCardNumber: string;
-  provider: string;
-}
+export type PurchaseAirtimeResponse = {
+  message?: string;
+  error?: string;
+  transactionId: string;
+};

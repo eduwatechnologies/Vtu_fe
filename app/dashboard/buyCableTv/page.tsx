@@ -6,10 +6,7 @@ import * as Yup from "yup";
 import { ApTextInput } from "@/components/input/textInput";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import {
-  getServiceVariations,
-  subscribeCable,
-} from "@/redux/features/services/serviceThunk";
+
 import GlobalModal from "@/components/modal/globalModal";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +18,8 @@ import {
   getCableServices,
   handleVerifyTvSub,
   purchaseTvSub,
-} from "@/redux/features/easyAccess/service";
+} from "@/redux/features/services/serviceThunk";
+import { useBeneficiaries } from "@/hooks/useBenefitiaries";
 
 interface CustomerDetails {
   name?: string;
@@ -44,6 +42,9 @@ export default function BuyCableTv() {
   const [categories, setCategories] = useState<string[]>([]);
   const [step, setStep] = useState<Step>("categories");
   const [selectedPlan, setSelectedPlan] = useState<any>();
+
+  const { beneficiaries, addBeneficiary } = useBeneficiaries("cable_beneficiaries");
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // const validationSchema = Yup.object({
   //   smartcard_number: Yup.string()
@@ -151,12 +152,17 @@ export default function BuyCableTv() {
 
     try {
       setLoading(true);
-      const resultAction = await dispatch(purchaseTvSub({ payload }));
+      const resultAction = await dispatch(purchaseTvSub(payload as any));
 
       if (purchaseTvSub.fulfilled.match(resultAction)) {
         const { request_id } = resultAction.payload;
 
         toast.success("✅ Cable TV subscription successful!");
+        addBeneficiary({
+          id: Date.now(),
+          name: customerDetails.name || "Unknown Smartcard",
+          phone: values.smartCardNo,
+        });
         router.push(`/dashboard/transaction?request_id=${request_id}`);
       } else {
         throw new Error("Subscription failed");
@@ -237,18 +243,68 @@ export default function BuyCableTv() {
                   ))}
                 </div>
 
-                <ApTextInput
-                  label="Smartcard Number"
-                  name="smartCardNo"
-                  type="text"
-                  placeHolder="Enter 10-digit Smartcard Number"
-                  onChange={(value: string) => {
-                    setFieldValue("smartCardNo", value);
-                    if (value.length === 10 && selectedProvider) {
-                      handleVerify(value);
-                    }
-                  }}
-                />
+                <div className="relative">
+                  <ApTextInput
+                    label="Smartcard Number"
+                    name="smartCardNo"
+                    type="text"
+                    placeHolder="Enter 10-digit Smartcard Number"
+                    value={values.smartCardNo}
+                    onChange={(value: string) => {
+                      setFieldValue("smartCardNo", value);
+                      if (value.length === 10 && selectedProvider) {
+                        handleVerify(value);
+                      }
+                    }}
+                    onFocus={() => setShowDropdown(true)}
+                    onBlur={() => {
+                      setTimeout(() => setShowDropdown(false), 200);
+                    }}
+                    ignoreFormik={false}
+                  />
+
+                  {showDropdown && beneficiaries.length > 0 && (
+                    <div className="absolute z-20 left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                      <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Saved Smartcards
+                        </span>
+                      </div>
+                      <div className="max-h-60 overflow-y-auto">
+                        {[...beneficiaries]
+                          .sort((a, b) => b.id - a.id)
+                          .slice(0, 4)
+                          .map((b) => (
+                            <button
+                              key={b.id}
+                              type="button"
+                              className="w-full text-left px-4 py-3 hover:bg-green-50 transition-colors flex items-center gap-3 border-b border-gray-50 last:border-0"
+                              onClick={() => {
+                                setFieldValue("smartCardNo", b.phone);
+                                setShowDropdown(false);
+                                // Trigger verification if provider is selected
+                                if (selectedProvider) {
+                                  handleVerify(b.phone);
+                                }
+                              }}
+                            >
+                              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xs shrink-0">
+                                {b.name?.charAt(0)?.toUpperCase() || "S"}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">
+                                  {b.name || "Unknown"}
+                                </p>
+                                <p className="text-xs text-gray-500 truncate">
+                                  {b.phone}
+                                </p>
+                              </div>
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {customerDetails.name && (
                   <div className="mt-3 p-3 bg-gray-100 rounded-md space-y-1">
