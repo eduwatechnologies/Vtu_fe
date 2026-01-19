@@ -18,6 +18,11 @@ import {
   Gift,
   Copy,
   Smartphone,
+  LucideLogOut,
+  LogOut,
+  Wallet,
+  LucideFlaskRound,
+  Plus,
 } from "lucide-react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,7 +33,11 @@ import { fetchUserTransactions } from "@/redux/features/transaction/transactionS
 import { NotificationModal } from "@/components/modal/notificationModal";
 import { currentUser } from "@/redux/features/user/userThunk";
 import TopSheetModal from "@/components/modal/topsheetModal";
+import GlobalModal from "@/components/modal/globalModal";
+import CenteredModal from "@/components/modal/centeredModal";
 import { getLatestNotification } from "@/redux/features/notifications/notificationSlice";
+import { AdsCarousel } from "../../components/ads/adsCarousel";
+import { motion } from "framer-motion";
 
 export const HomeDashboard = () => {
   const [copied, setCopied] = useState(false);
@@ -38,6 +47,7 @@ export const HomeDashboard = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
   const [isOpen, setIsOpen] = useState(false);
+  const [isFundModalOpen, setIsFundModalOpen] = useState(false);
 
   const { transactions, loading } = useSelector(
     (state: RootState) => state.transactions
@@ -120,47 +130,28 @@ export const HomeDashboard = () => {
             : "••••••"}
         </p>
 
-        {/* Bonus and claim */}
-        <div className="grid grid-cols-2 gap-3 mt-6 text-sm">
-          <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
-            <TrendingUp size={14} className="text-emerald-400" />
-            <span>Bonus: ₦{user?.bonus ?? "0.00"}</span>
-          </div>
-          <div className="bg-white/10 rounded-lg px-4 py-2 flex items-center gap-2 backdrop-blur-md">
-            <Gift size={14} className="text-pink-400" />
-            <span>Claim: ₦0.00</span>
-          </div>
-        </div>
-
-        {/* Account details */}
-        <div className="mt-5 bg-white/10 rounded-lg p-3 backdrop-blur-md text-sm">
-          <p className="font-semibold text-purple-300">
-            {user?.account?.bankName}
-          </p>
-
-          <div className="mt-1 space-y-1 opacity-90">
-            <div className="flex items-center justify-between">
-              <p>
-                <span className="font-bold text-white">Acc No:</span>{" "}
-                {user?.account?.accountNumber}
+        {/* Bonus and Fund */}
+        <div className="flex gap-3 mt-4">
+          <div className="bg-white/20 rounded-lg py-2 px-3 flex items-center flex-1">
+            <Wallet size={18} className="text-purple-300 mr-2" />
+            <div>
+              <p className="text-xs text-purple-200">Earnings</p>
+              <p className="font-bold text-sm">
+                ₦{user?.bonus ?? "0.00"}
               </p>
-
-              <button
-                onClick={() => handleCopy(user?.account?.accountNumber || "")}
-                className="text-purple-300 hover:text-purple-400"
-              >
-                <Copy size={16} />
-              </button>
             </div>
-
-            <p>
-              <span className="font-bold text-white">Acc Name:</span>{" "}
-              {user?.account?.accountName}
-            </p>
-
-            {copied && <p className="text-xs text-green-400 mt-1">Copied ✅</p>}
           </div>
+
+          <button
+            onClick={() => setIsFundModalOpen(true)}
+            className="bg-white/20 rounded-lg py-2 px-3 flex items-center flex-1 hover:bg-white/30 transition"
+          >
+            <Plus size={18} className="text-purple-300 mr-2" />
+            <span className="font-semibold text-sm">Fund Wallet</span>
+          </button>
         </div>
+
+        
       </div>
 
       {/* Quick Actions */}
@@ -188,7 +179,7 @@ export const HomeDashboard = () => {
           {
             id: 4,
             icon: <Smartphone size={24} className="text-purple-600" />,
-            label: "A2Cash",
+            label: "AirtimeFlip",
             link: "/dashboard/airtime2cash",
           },
           {
@@ -209,6 +200,13 @@ export const HomeDashboard = () => {
             label: "More",
             action: () => setIsOpen(true),
           },
+
+          {
+            id: 8,
+            icon: <LogOut size={24} className="text-purple-600" />,
+            label: "Logout",
+            action: () => setIsOpen(true),
+          },
         ].map((action) => (
           <Link
             key={action.id}
@@ -223,6 +221,9 @@ export const HomeDashboard = () => {
           </Link>
         ))}
       </div>
+
+      {/* Ads Carousel */}
+      <AdsCarousel />
 
       {/* Recent Transactions */}
       <div className="bg-white shadow-md rounded-lg p-6 mb-10">
@@ -297,22 +298,46 @@ export const HomeDashboard = () => {
         )}
       </div>
 
-      <TopSheetModal
+      <CenteredModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="More"
+        title="All Services"
       >
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           {[
             {
               id: 1,
-              icon: <GraduationCap size={24} />,
+              icon: <Phone size={24} className="text-purple-600" />,
+              label: "Airtime",
+              link: "/dashboard/buyAirtime",
+            },
+            {
+              id: 2,
+              icon: <Wifi size={24} className="text-purple-600" />,
+              label: "Data",
+              link: "/dashboard/buyData",
+            },
+            {
+              id: 3,
+              icon: <Bolt size={24} className="text-purple-600" />,
+              label: "Electricity",
+              link: "/dashboard/buyElectricity",
+            },
+            {
+              id: 4,
+              icon: <Smartphone size={24} className="text-purple-600" />,
+              label: "AirtimeFlip",
+              link: "/dashboard/airtime2cash",
+            },
+            {
+              id: 5,
+              icon: <GraduationCap size={24} className="text-purple-600" />,
               label: "Exam",
               link: "/dashboard/buyExam",
             },
             {
-              id: 2,
-              icon: <Tv2 size={24} />,
+              id: 6,
+              icon: <Tv2 size={24} className="text-purple-600" />,
               label: "TV",
               link: "/dashboard/buyCableTv",
             },
@@ -320,14 +345,61 @@ export const HomeDashboard = () => {
             <Link
               key={item.id}
               href={item?.link}
-              className="flex flex-col items-center"
+              onClick={() => setIsOpen(false)}
+              className="flex flex-col items-center justify-center p-4 rounded-xl hover:bg-gray-50 transition border border-gray-100 bg-white shadow-sm"
             >
               {item.icon}
-              <span className="text-sm">{item.label}</span>
+              <span className="text-xs font-medium mt-2 text-gray-700">{item.label}</span>
             </Link>
           ))}
         </div>
-      </TopSheetModal>
+      </CenteredModal>
+
+      <GlobalModal
+        title="Fund Wallet"
+        isOpen={isFundModalOpen}
+        onClose={() => setIsFundModalOpen(false)}
+      >
+        <div className="space-y-4">
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+            <p className="text-sm text-gray-500 mb-1">Bank Name</p>
+            <p className="font-semibold text-gray-800 text-lg">
+              {user?.account?.bankName || "N/A"}
+            </p>
+          </div>
+
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-100 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Account Number</p>
+              <p className="font-semibold text-gray-800 text-2xl tracking-widest">
+                {user?.account?.accountNumber || "N/A"}
+              </p>
+            </div>
+            <button
+              onClick={() => handleCopy(user?.account?.accountNumber || "")}
+              className="p-2 bg-purple-100 text-purple-600 rounded-full hover:bg-purple-200 transition"
+            >
+              {copied ? <CheckCircle size={20} /> : <Copy size={20} />}
+            </button>
+          </div>
+
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+            <p className="text-sm text-gray-500 mb-1">Account Name</p>
+            <p className="font-semibold text-gray-800 text-lg">
+              {user?.account?.accountName || "N/A"}
+            </p>
+          </div>
+
+          <div className="bg-blue-50 p-4 rounded-lg flex items-start space-x-3">
+            <div className="bg-blue-100 p-1 rounded-full">
+              <Receipt className="w-4 h-4 text-blue-600" />
+            </div>
+            <p className="text-xs text-blue-700 leading-relaxed">
+              Transfer to the account above to fund your wallet instantly.
+            </p>
+          </div>
+        </div>
+      </GlobalModal>
 
       <NotificationModal notification={notification} />
     </div>

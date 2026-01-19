@@ -263,14 +263,11 @@ export default function HistoryPage() {
                 >
                   {/* Top Row - Status & Type */}
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-semibold text-gray-500">
-                      {trans?.transaction_type
-                        ? trans.transaction_type.charAt(0).toUpperCase() +
-                          trans.transaction_type.slice(1)
-                        : "Transaction"}
+                    <span className="text-xs font-semibold text-gray-500 capitalize">
+                      {trans?.service}
                     </span>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                      className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(
                         status
                       )}`}
                     >
@@ -279,38 +276,34 @@ export default function HistoryPage() {
                   </div>
 
                   {/* Amount */}
-                  <div className="text-lg font-bold text-gray-900 mb-3">
+                  <div className="text-lg font-bold text-gray-900 mb-1">
                     ₦{Number(trans?.amount || 0).toLocaleString()}
                   </div>
 
-                  {/* Service */}
-                  <p className="text-gray-600 text-sm">
-                    <span className="font-medium">Service:</span>{" "}
-                    {trans?.service || "N/A"}
-                  </p>
-
+                
+                 
                   {/* Reference */}
                   <p className="text-gray-600 text-sm">
-                    <span className="font-medium">Reference:</span>{" "}
+                    <span className="font-medium font-semibold">Reference:</span>{" "}
                     {trans?.reference_no || "N/A"}
                   </p>
 
                   {/* Balances */}
-                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-700 mb-2">
+                  <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 mb-2">
                     <div>
-                      <span className="font-medium">Previous Balance:</span> ₦
+                      <span className="font-semibold">Old Balance:</span> ₦
                       {Number(trans?.previous_balance ?? 0).toLocaleString()}
                     </div>
                     <div>
-                      <span className="font-medium">New Balance:</span> ₦
+                      <span className="font-semibold ">New Balance:</span> ₦
                       {Number(trans?.new_balance ?? 0).toLocaleString()}
                     </div>
                   </div>
 
                   {/* Date */}
-                  <p className="text-gray-500 text-xs mt-2">
+                  {/* <p className="text-gray-500 text-xs mt-2">
                     {getTxnDate(trans).toLocaleString()}
-                  </p>
+                  </p> */}
                 </Link>
               );
             })}
