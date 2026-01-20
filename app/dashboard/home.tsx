@@ -172,7 +172,7 @@ export const HomeDashboard = () => {
           {
             id: 3,
             icon: <Bolt size={24} className="text-purple-600" />,
-            label: "Electricity",
+            label: "Bill",
             link: "/dashboard/buyElectricity",
           },
 
@@ -196,17 +196,18 @@ export const HomeDashboard = () => {
           },
           {
             id: 7,
+            icon: <Gift size={24} className="text-purple-600" />,
+            label: "Tasks",
+            link: "/dashboard/tasks",
+          },
+          {
+            id: 8,
             icon: <Grid size={24} className="text-purple-600" />,
             label: "More",
             action: () => setIsOpen(true),
           },
 
-          {
-            id: 8,
-            icon: <LogOut size={24} className="text-purple-600" />,
-            label: "Logout",
-            action: () => setIsOpen(true),
-          },
+        
         ].map((action) => (
           <Link
             key={action.id}
@@ -340,6 +341,12 @@ export const HomeDashboard = () => {
               icon: <Tv2 size={24} className="text-purple-600" />,
               label: "TV",
               link: "/dashboard/buyCableTv",
+            },
+            {
+              id: 7,
+              icon: <Gift size={24} className="text-purple-600" />,
+              label: "Tasks",
+              link: "/dashboard/tasks",
             },
           ].map((item) => (
             <Link

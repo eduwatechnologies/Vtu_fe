@@ -29,11 +29,12 @@ export default function SignIn() {
       toast.success("Login successful");
       router.push("/dashboard");
     } else {
-      const errorMessage = (resultAction.payload as any)?.msg;
-      if (errorMessage === "Email not verified") {
+      const payload = resultAction.payload as any;
+      const errorMessage = payload?.msg;
+      
+      if (errorMessage === "Email not verified" || payload?.errorCode === "unverified_email") {
+        toast.info("Please verify your email to continue");
         router.push(`/auth/verify?email=${values.email}&type=verify`);
-        // toast.error("Kindly verify your email to login");
-
         return;
       }
 
