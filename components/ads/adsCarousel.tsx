@@ -7,7 +7,7 @@ const ads = [
   {
     id: 1,
     title: "Data is Cheap Here!",
-    description: "Get 1GB for as low as ₦230. Valid for 30 days.",
+    description: "Get 1GB for as low as ₦550. Valid for 30 days.",
     color: "from-blue-600 to-cyan-500",
   },
   {
